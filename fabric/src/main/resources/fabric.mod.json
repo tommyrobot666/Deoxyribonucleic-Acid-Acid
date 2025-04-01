@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "dnacid",
+  "version": "${version}",
+  "name": "Deoxyribonucleic Acid",
+  "description": "",
+  "authors": [
+    "Tommy Tyler"
+  ],
+  "contact": {
+    "homepage": ""
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/dnacid/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "lommie.dnacid.fabric.DnacidFabric"
+    ],
+    "client": [
+      "lommie.dnacid.fabric.client.DnacidFabricClient"
+    ]
+  },
+  "mixins": [
+    "dnacid.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "architectury": ">=15.0.1",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

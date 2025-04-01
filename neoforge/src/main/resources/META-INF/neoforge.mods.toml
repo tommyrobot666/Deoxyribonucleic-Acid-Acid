@@ -1,0 +1,38 @@
+modLoader = "javafml"
+loaderVersion = "[2,)"
+#issueTrackerURL = ""
+license = "All Rights Reserved"
+
+[[mods]]
+modId = "dnacid"
+version = "${version}"
+displayName = "Deoxyribonucleic Acid"
+authors = "Tommy Tyler"
+description = '''
+
+'''
+#logoFile = ""
+
+[[dependencies.dnacid]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.dnacid]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.4,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.dnacid]]
+modId = "architectury"
+type = "required"
+versionRange = "[15.0.1,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[mixins]]
+config = "dnacid.mixins.json"

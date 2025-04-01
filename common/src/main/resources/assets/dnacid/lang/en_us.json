@@ -1,0 +1,31 @@
+{
+  "category.dnacid": "DNA Acid",
+
+  "item.dnacid.soap": "Soap",
+  "item.dnacid.protein": "Protein",
+
+  "item.dnacid.amino_acid_a": "Alanine (A)",
+  "item.dnacid.amino_acid_r": "Arginine (R)",
+  "item.dnacid.amino_acid_n": "Asparagine (N)",
+  "item.dnacid.amino_acid_d": "Aspartic acid (D)",
+  "item.dnacid.amino_acid_c": "Cysteine (C)",
+  "item.dnacid.amino_acid_q": "Glutamine (Q)",
+  "item.dnacid.amino_acid_e": "Glutamic acid (E)",
+  "item.dnacid.amino_acid_g": "Glycine (G)",
+  "item.dnacid.amino_acid_h": "Histidine (H)",
+  "item.dnacid.amino_acid_i": "Isoleucine (I)",
+  "item.dnacid.amino_acid_l": "Leucine (L)",
+  "item.dnacid.amino_acid_k": "Lysine (K)",
+  "item.dnacid.amino_acid_m": "Methionine (M)",
+  "item.dnacid.amino_acid_f": "Phenylalanine (F)",
+  "item.dnacid.amino_acid_p": "Proline (P)",
+  "item.dnacid.amino_acid_s": "Serine (S)",
+  "item.dnacid.amino_acid_t": "Threonine (T)",
+  "item.dnacid.amino_acid_w": "Tryptophan (W)",
+  "item.dnacid.amino_acid_y": "Tyrosine (Y)",
+  "item.dnacid.amino_acid_v": "Valine (V)",
+
+  "item.dnacid.protein_constructor": "Protein Constructor",
+
+  "block.dnacid.protein_constructor": "PrOOotein Constructor"
+}
