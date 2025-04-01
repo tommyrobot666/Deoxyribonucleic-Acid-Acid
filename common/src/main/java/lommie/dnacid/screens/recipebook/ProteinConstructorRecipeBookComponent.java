@@ -30,7 +30,6 @@ public class ProteinConstructorRecipeBookComponent<T extends RecipeBookMenu> ext
         super(recipeBookMenu, List.of(
                 new RecipeBookComponent.TabInfo(Dnacid.SOAP.get(), Dnacid.PROTEIN_CONSTRUCTOR_RECIPE_CATEGORY.get())
         ));
-        Dnacid.LOGGER.warn("Yes, The book is strange");
 
         SlotSelectTime slotSelectTime = () -> {
             try {
@@ -49,18 +48,6 @@ public class ProteinConstructorRecipeBookComponent<T extends RecipeBookMenu> ext
         } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
-        /*
-        if (SearchRecipeBookCategory.CRAFTING.includedCategories().equals(List.of(RecipeBookCategories.CRAFTING_EQUIPMENT, RecipeBookCategories.CRAFTING_BUILDING_BLOCKS, RecipeBookCategories.CRAFTING_MISC, RecipeBookCategories.CRAFTING_REDSTONE))) {
-            try {
-                Field includedCategories = SearchRecipeBookCategory.class.getDeclaredField("includedCategories");
-                includedCategories.setAccessible(true);
-                includedCategories.set(SearchRecipeBookCategory.CRAFTING, List.of(RecipeBookCategories.CRAFTING_EQUIPMENT, RecipeBookCategories.CRAFTING_BUILDING_BLOCKS, RecipeBookCategories.CRAFTING_MISC, RecipeBookCategories.CRAFTING_REDSTONE, Dnacid.PROTEIN_CONSTRUCTOR_RECIPE_CATEGORY.get()));
-                SearchRecipeBookCategory.CRAFTING.includedCategories().forEach((cat)->Dnacid.LOGGER.error(cat.toString()));
-                Dnacid.LOGGER.error(Dnacid.PROTEIN_CONSTRUCTOR_RECIPE_CATEGORY.get().toString());
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }*/
     }
 
     @Override
