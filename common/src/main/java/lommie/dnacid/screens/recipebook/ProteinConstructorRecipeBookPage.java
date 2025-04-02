@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 public class ProteinConstructorRecipeBookPage {
     List<RecipeCollection> alwaysTheRcipeCollections = List.of(
             new RecipeCollection(List.of(
-                    new RecipeDisplayEntry(new RecipeDisplayId(0),
+                    new RecipeDisplayEntry("RecipeDisplayId is like a list of all recipes, 0 -> boat" //new RecipeDisplayId(0),
                             new ProteinConstructorRecipe("", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "idk").toShapedRecipe().display().getFirst(),
                             OptionalInt.empty(),
                             Dnacid.PROTEIN_CONSTRUCTOR_RECIPE_CATEGORY.get(),

@@ -434,10 +434,10 @@ public class ProteinConstructorRecipeBookComponent<T extends RecipeBookMenu> imp
     }
 
     private boolean tryPlaceRecipe(RecipeCollection recipeCollection, RecipeDisplayId recipeDisplayId) {
-        Dnacid.LOGGER.error("tryPlaceRecipe");
         if (!recipeCollection.isCraftable(recipeDisplayId) && recipeDisplayId.equals(this.lastPlacedRecipe)) {
             return false;
         } else {
+            Dnacid.LOGGER.error("tryPlaceRecipe");
             this.lastPlacedRecipe = recipeDisplayId;
             this.ghostSlots.clear();
             this.minecraft.gameMode.handlePlaceRecipe(this.minecraft.player.containerMenu.containerId, recipeDisplayId, Screen.hasShiftDown());

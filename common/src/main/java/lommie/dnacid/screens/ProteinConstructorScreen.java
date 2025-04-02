@@ -67,6 +67,7 @@ public class ProteinConstructorScreen extends AbstractContainerScreen<ProteinCon
     protected void init() {
         super.init();
         this.widthTooNarrow = this.width < 379;
+        assert this.minecraft != null;
         this.betterRecipeBookComponent.init(this.width, this.height, this.minecraft, this.widthTooNarrow);
         this.leftPos = this.betterRecipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
         this.betterRecipeBookComponent.init(this.width, this.height, this.minecraft, false);

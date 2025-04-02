@@ -105,6 +105,7 @@ public class ProteinConstructorMenu extends AbstractCraftingMenu implements Menu
 
     @Override
     public @NotNull PostPlaceAction handlePlacement(boolean placeAll, boolean placeOne, RecipeHolder<?> recipeHolder, ServerLevel serverLevel, Inventory inventory) {
+        Dnacid.LOGGER.error("HP");
         // Attempt to cast the recipe holder to our specific recipe type
         RecipeHolder<ProteinConstructorRecipe> proteinRecipeHolder;
         try {
