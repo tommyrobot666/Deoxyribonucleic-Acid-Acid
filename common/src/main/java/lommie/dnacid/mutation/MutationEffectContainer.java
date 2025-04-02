@@ -2,7 +2,7 @@ package lommie.dnacid.mutation;
 
 import java.util.ArrayList;
 
-public interface Mutatable {
+public interface MutationEffectContainer {
     void addMutationEffect(MutationEffect effect);
 
     ArrayList<MutationEffect> getMutationEffects();

@@ -1,7 +1,7 @@
 package lommie.dnacid.items;
 
 import lommie.dnacid.Dnacid;
-import lommie.dnacid.mutation.Mutatable;
+import lommie.dnacid.mutation.MutationEffectContainer;
 import lommie.dnacid.mutation.TestMutationEffect;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -38,7 +38,7 @@ public class AminoAcidContainingItem extends Item {
         }
 
         if (useOnContext.getLevel().getBlockState(useOnContext.getClickedPos()).is(Blocks.COPPER_BLOCK)){
-            ((Mutatable) useOnContext.getPlayer()).addMutationEffect(new TestMutationEffect());
+            ((MutationEffectContainer) useOnContext.getPlayer()).addMutationEffect(new TestMutationEffect());
             return InteractionResult.SUCCESS_SERVER;
         }
 

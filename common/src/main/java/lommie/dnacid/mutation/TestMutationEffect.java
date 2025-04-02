@@ -5,10 +5,10 @@ import net.minecraft.world.level.GameType;
 
 public class TestMutationEffect implements MutationEffect{
     @Override
-    public boolean mutationTick(Mutatable mutatable) {
-        switch (mutatable.getMutationCreatureType()){
+    public boolean mutationTick(MutationEffectContainer mutationEffectContainer) {
+        switch (mutationEffectContainer.getMutationCreatureType()){
             case PLAYER -> {
-                ServerPlayer player = (ServerPlayer) mutatable;
+                ServerPlayer player = (ServerPlayer) mutationEffectContainer;
                 player.setGameMode(GameType.ADVENTURE);
                 break;
             }
