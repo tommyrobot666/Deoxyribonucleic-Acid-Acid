@@ -12,7 +12,6 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.StateSwitchingButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.recipebook.OverlayRecipeComponent;
-import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
 import net.minecraft.client.gui.screens.recipebook.SlotSelectTime;
 import net.minecraft.core.component.DataComponents;
@@ -36,12 +35,11 @@ public class ProteinConstructorRecipeBookPage {
     List<RecipeCollection> alwaysTheRcipeCollections = List.of(
             new RecipeCollection(List.of(
                     new RecipeDisplayEntry(new RecipeDisplayId(0),
-                            new ProteinConstructorRecipe("", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "idk").toShapedRecipe().display().get(0),
+                            new ProteinConstructorRecipe("", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "idk").toShapedRecipe().display().getFirst(),
                             OptionalInt.empty(),
                             Dnacid.PROTEIN_CONSTRUCTOR_RECIPE_CATEGORY.get(),
-                            Optional.of(List.of(Ingredient.of(Dnacid.AMINO_ACIDS.get(0).get()))))
+                            Optional.of(List.of(Ingredient.of(Dnacid.AMINO_ACIDS.getFirst().get()))))
             )));
-    public static final int ITEMS_PER_PAGE = 20;
     private static final WidgetSprites PAGE_FORWARD_SPRITES = new WidgetSprites(ResourceLocation.withDefaultNamespace("recipe_book/page_forward"), ResourceLocation.withDefaultNamespace("recipe_book/page_forward_highlighted"));
     private static final WidgetSprites PAGE_BACKWARD_SPRITES = new WidgetSprites(ResourceLocation.withDefaultNamespace("recipe_book/page_backward"), ResourceLocation.withDefaultNamespace("recipe_book/page_backward_highlighted"));
     private final List<ProteinConstructorRecipeButton> buttons = Lists.newArrayListWithCapacity(20);
@@ -49,7 +47,7 @@ public class ProteinConstructorRecipeBookPage {
     private ProteinConstructorRecipeButton hoveredButton;
     private final OverlayRecipeComponent overlay;
     private Minecraft minecraft;
-    private final RecipeBookComponent<?> parent;
+    private final ProteinConstructorRecipeBookComponent<?> parent;
     private List<RecipeCollection> recipeCollections = ImmutableList.of();
     private StateSwitchingButton forwardButton;
     private StateSwitchingButton backButton;
@@ -62,17 +60,24 @@ public class ProteinConstructorRecipeBookPage {
     private RecipeCollection lastClickedRecipeCollection;
     private boolean isFiltering;
 
-    public ProteinConstructorRecipeBookPage(RecipeBookComponent<?> recipeBookComponent, SlotSelectTime slotSelectTime, boolean bl) {
+    public ProteinConstructorRecipeBookPage(ProteinConstructorRecipeBookComponent<?> recipeBookComponent, SlotSelectTime slotSelectTime, boolean bl) {
         this.parent = recipeBookComponent;
         this.overlay = new OverlayRecipeComponent(slotSelectTime, bl);
 
         for (int i = 0; i < 20; ++i) {
             this.buttons.add(new ProteinConstructorRecipeButton(slotSelectTime));
         }
+
+        this.recipeCollections = calculateRecipeCollections();
+    }
+
+    private List<RecipeCollection> calculateRecipeCollections() {
+        return alwaysTheRcipeCollections;
     }
 
     public void init(Minecraft minecraft, int i, int j) {
         this.minecraft = minecraft;
+        assert minecraft.player != null;
         this.recipeBook = ((ILocalPlayerMixin) minecraft.player).getProteinConstructorClientRecipeBook();
 
         for (int k = 0; k < this.buttons.size(); ++k) {
@@ -86,7 +91,7 @@ public class ProteinConstructorRecipeBookPage {
     }
 
     public void updateCollections(List<RecipeCollection> list, boolean bl, boolean bl2) {
-        this.recipeCollections = list;
+        //this.recipeCollections = list;
         this.isFiltering = bl2;
         this.totalPages = (int) Math.ceil((double) list.size() / 20.0);
         if (this.totalPages <= this.currentPage || bl) {
@@ -98,10 +103,11 @@ public class ProteinConstructorRecipeBookPage {
 
     private void updateButtonsForPage() {
         int i = 20 * this.currentPage;
+        assert this.minecraft.level != null;
         ContextMap contextMap = SlotDisplayContext.fromLevel(this.minecraft.level);
 
         for (int j = 0; j < this.buttons.size(); ++j) {
-            ProteinConstructorRecipeButton proteinConstructorRecipeButton = (ProteinConstructorRecipeButton) this.buttons.get(j);
+            ProteinConstructorRecipeButton proteinConstructorRecipeButton = this.buttons.get(j);
             if (i + j < this.recipeCollections.size()) {
                 RecipeCollection recipeCollection = this.recipeCollections.get(i + j);
                 proteinConstructorRecipeButton.init(recipeCollection, this.isFiltering, this, contextMap);
@@ -121,16 +127,14 @@ public class ProteinConstructorRecipeBookPage {
 
     public void render(GuiGraphics guiGraphics, int i, int j, int k, int l, float f) {
         if (this.totalPages > 1) {
-            Component component = Component.translatable("gui.recipebook.page", new Object[]{this.currentPage + 1, this.totalPages});
+            Component component = Component.translatable("gui.recipebook.page", this.currentPage + 1, this.totalPages);
             int m = this.minecraft.font.width(component);
             guiGraphics.drawString(this.minecraft.font, component, i - m / 2 + 73, j + 141, -1);
         }
 
         this.hoveredButton = null;
-        Iterator var9 = this.buttons.iterator();
 
-        while (var9.hasNext()) {
-            ProteinConstructorRecipeButton proteinConstructorRecipeButton = (ProteinConstructorRecipeButton) var9.next();
+        for (ProteinConstructorRecipeButton proteinConstructorRecipeButton : this.buttons) {
             proteinConstructorRecipeButton.render(guiGraphics, k, l, f);
             if (proteinConstructorRecipeButton.visible && proteinConstructorRecipeButton.isHoveredOrFocused()) {
                 this.hoveredButton = proteinConstructorRecipeButton;
@@ -145,7 +149,7 @@ public class ProteinConstructorRecipeBookPage {
     public void renderTooltip(GuiGraphics guiGraphics, int i, int j) {
         if (this.minecraft.screen != null && this.hoveredButton != null && !this.overlay.isVisible()) {
             ItemStack itemStack = this.hoveredButton.getDisplayStack();
-            ResourceLocation resourceLocation = (ResourceLocation) itemStack.get(DataComponents.TOOLTIP_STYLE);
+            ResourceLocation resourceLocation = itemStack.get(DataComponents.TOOLTIP_STYLE);
             guiGraphics.renderComponentTooltip(this.minecraft.font, this.hoveredButton.getTooltipText(itemStack), i, j, resourceLocation);
         }
 
@@ -186,16 +190,17 @@ public class ProteinConstructorRecipeBookPage {
             this.updateButtonsForPage();
             return true;
         } else {
+            assert this.minecraft.level != null;
             ContextMap contextMap = SlotDisplayContext.fromLevel(this.minecraft.level);
-            Iterator var11 = this.buttons.iterator();
+            Iterator<ProteinConstructorRecipeButton> buttonIterator = this.buttons.iterator();
 
             ProteinConstructorRecipeButton proteinConstructorRecipeButton;
             do {
-                if (!var11.hasNext()) {
+                if (!buttonIterator.hasNext()) {
                     return false;
                 }
 
-                proteinConstructorRecipeButton = (ProteinConstructorRecipeButton) var11.next();
+                proteinConstructorRecipeButton = buttonIterator.next();
             } while (!proteinConstructorRecipeButton.mouseClicked(d, e, i));
 
             if (i == 0) {

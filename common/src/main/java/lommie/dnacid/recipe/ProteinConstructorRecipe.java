@@ -91,7 +91,7 @@ public class ProteinConstructorRecipe implements Recipe<RecipeInput> {
 
 // Pad the patternString with spaces to ensure it's long enough.
         String paddedPatternString = String.format("%-" + totalLength + "s", patternString);
-        Dnacid.LOGGER.warn(paddedPatternString);
+        //Dnacid.LOGGER.warn(paddedPatternString);
         List<String> rows = new ArrayList<>(numRows);
         for (int row = 0; row < numRows; row++) {
             int start = row * rowLength;

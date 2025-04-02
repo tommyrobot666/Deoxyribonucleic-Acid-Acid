@@ -1,5 +1,6 @@
 package lommie.dnacid.screens.recipebook;
 
+import lommie.dnacid.Dnacid;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.ClientRecipeBook;
@@ -31,8 +32,6 @@ public class ProteinConstructorRecipeButton extends RecipeButton {
     private static final ResourceLocation SLOT_CRAFTABLE_SPRITE = ResourceLocation.withDefaultNamespace("recipe_book/slot_craftable");
     private static final ResourceLocation SLOT_MANY_UNCRAFTABLE_SPRITE = ResourceLocation.withDefaultNamespace("recipe_book/slot_many_uncraftable");
     private static final ResourceLocation SLOT_UNCRAFTABLE_SPRITE = ResourceLocation.withDefaultNamespace("recipe_book/slot_uncraftable");
-    private static final float ANIMATION_TIME = 15.0F;
-    private static final int BACKGROUND_SIZE = 25;
     private static final Component MORE_RECIPES_TOOLTIP = Component.translatable("gui.recipebook.moreRecipes");
     private RecipeCollection collection;
     private List<ResolvedEntry> selectedEntries;
@@ -45,9 +44,10 @@ public class ProteinConstructorRecipeButton extends RecipeButton {
         this.slotSelectTime = slotSelectTime;
     }
     
-    public void init(RecipeCollection recipeCollection, boolean bl, ProteinConstructorRecipeBookPage recipeBookPage, ContextMap contextMap) {
+    public void init(RecipeCollection recipeCollection, boolean filtering, ProteinConstructorRecipeBookPage recipeBookPage, ContextMap contextMap) {
         this.collection = recipeCollection;
-        List<RecipeDisplayEntry> list = recipeCollection.getSelectedRecipes(bl ? RecipeCollection.CraftableStatus.CRAFTABLE : RecipeCollection.CraftableStatus.ANY);
+        //Dnacid.LOGGER.error(recipeCollection.getRecipes().toString());
+        List<RecipeDisplayEntry> list = recipeCollection.getRecipes();//recipeCollection.getSelectedRecipes(filtering ? RecipeCollection.CraftableStatus.CRAFTABLE : RecipeCollection.CraftableStatus.ANY);
         this.selectedEntries = list.stream().map((recipeDisplayEntry) -> new ResolvedEntry(recipeDisplayEntry.id(), recipeDisplayEntry.resultItems(contextMap))).toList();
         this.allRecipesHaveSameResultDisplay = allRecipesHaveSameResultDisplay(this.selectedEntries);
         Stream<RecipeDisplayId> var10000 = list.stream().map(RecipeDisplayEntry::id);
@@ -143,6 +143,10 @@ public class ProteinConstructorRecipeButton extends RecipeButton {
     public @NotNull ItemStack getDisplayStack() {
         int i = this.slotSelectTime.currentIndex();
         int j = this.selectedEntries.size();
+        if (j == 0){
+            Dnacid.LOGGER.error("getDisplayStack failed because this.selectedEntries.size() == 0");
+            return new ItemStack(Dnacid.PROTEIN.get());
+        }
         int k = i / j;
         int l = i - j * k;
         return ((ResolvedEntry)this.selectedEntries.get(l)).selectItem(k);

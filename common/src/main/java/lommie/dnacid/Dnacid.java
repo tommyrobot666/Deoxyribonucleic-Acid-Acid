@@ -168,7 +168,7 @@ public final class Dnacid {
 
     static List<RegistrySupplier<Item>> register_amino_acids(){
         ArrayList<RegistrySupplier<Item>> acids = new ArrayList<>();
-        StringBuilder transMsg = new StringBuilder();
+        //StringBuilder transMsg = new StringBuilder();
         for (Character c : AMINO_ACID_CHARS){
             acids.add(
             ITEMS.register("amino_acid_"+String.valueOf(c).toLowerCase(),
@@ -180,9 +180,9 @@ public final class Dnacid {
                     )
             )
             );
-            transMsg.append("\"item." + MOD_ID + ".amino_acid_").append(String.valueOf(c).toLowerCase()).append("\": \"name\"\n");
+            //transMsg.append("\"item." + MOD_ID + ".amino_acid_").append(String.valueOf(c).toLowerCase()).append("\": \"name\"\n");
         }
-        LOGGER.warn(transMsg.toString());
+        //LOGGER.warn(transMsg.toString());
         return acids;
     }
 
@@ -191,7 +191,7 @@ public final class Dnacid {
     );
 
     public static void init() {
-        LOGGER.error(AMINO_ACIDS.toString());
+        //LOGGER.error(AMINO_ACIDS.toString());
 
         RECIPE_SERIALIZERS.register();
         RECIPE_TYPES.register();

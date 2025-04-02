@@ -1,6 +1,6 @@
 package lommie.dnacid.mixin;
 
-import lommie.dnacid.mutation.Mutatable;
+import lommie.dnacid.mutation.MutationEffectContainer;
 import lommie.dnacid.mutation.MutationEffect;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 
 @Mixin(value = ServerPlayer.class)
-public abstract class ServerPlayerMixin implements Mutatable {
+public abstract class ServerPlayerMixin implements MutationEffectContainer {
     @Unique
     ArrayList<MutationEffect> mutationEffects = new ArrayList<>();
 

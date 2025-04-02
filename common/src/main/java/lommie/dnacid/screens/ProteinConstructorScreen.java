@@ -2,12 +2,14 @@ package lommie.dnacid.screens;
 
 import lommie.dnacid.Dnacid;
 import lommie.dnacid.screens.recipebook.ProteinConstructorRecipeBookComponent;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.navigation.ScreenPosition;
-import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
-import net.minecraft.client.gui.screens.recipebook.CraftingRecipeBookComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
+import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -17,18 +19,15 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import org.jetbrains.annotations.NotNull;
 
-public class ProteinConstructorScreen extends AbstractRecipeBookScreen<ProteinConstructorMenu> {
+@Environment(EnvType.CLIENT)
+public class ProteinConstructorScreen extends AbstractContainerScreen<ProteinConstructorMenu> implements RecipeUpdateListener {
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.tryBuild(Dnacid.MOD_ID, "textures/gui/protein_constructor.png");
     private final ProteinConstructorRecipeBookComponent<ProteinConstructorMenu> betterRecipeBookComponent;
+    private boolean widthTooNarrow;
 
     public ProteinConstructorScreen(ProteinConstructorMenu menu, Inventory playerInventory, Component title) {
-        super(menu, new CraftingRecipeBookComponent(menu) ,playerInventory, title);
+        super(menu, playerInventory, title);
         this.betterRecipeBookComponent = new ProteinConstructorRecipeBookComponent<>(menu);
-    }
-
-    @Override
-    protected @NotNull ScreenPosition getRecipeBookButtonPosition() {
-        return new ScreenPosition(999,999);
     }
 
     protected @NotNull ScreenPosition getRealRecipeBookButtonPosition() {
@@ -67,26 +66,39 @@ public class ProteinConstructorScreen extends AbstractRecipeBookScreen<ProteinCo
     @Override
     protected void init() {
         super.init();
+        this.widthTooNarrow = this.width < 379;
+        this.betterRecipeBookComponent.init(this.width, this.height, this.minecraft, this.widthTooNarrow);
+        this.leftPos = this.betterRecipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
         this.betterRecipeBookComponent.init(this.width, this.height, this.minecraft, false);
         initButton();
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-        super.render(guiGraphics, i, j, f);
+        if (this.betterRecipeBookComponent.isVisible() && this.widthTooNarrow) {
+            this.renderBackground(guiGraphics, i, j, f);
+        } else {
+            super.render(guiGraphics, i, j, f);
+        }
+
         betterRecipeBookComponent.render(guiGraphics, i, j, f);
+        this.renderTooltip(guiGraphics, i, j);
         betterRecipeBookComponent.renderTooltip(guiGraphics, i, j, this.hoveredSlot);
     }
 
     @Override
     protected void renderSlots(GuiGraphics guiGraphics) {
         super.renderSlots(guiGraphics);
-        this.betterRecipeBookComponent.renderGhostRecipe(guiGraphics, this.isBiggerResultSlot());
+        this.betterRecipeBookComponent.renderGhostRecipe(guiGraphics, true);//this.isBiggerResultSlot());
     }
 
     @Override
     public boolean charTyped(char c, int i) {
         return this.betterRecipeBookComponent.charTyped(c, i) || super.charTyped(c, i);
+    }
+
+    protected void onRecipeBookButtonClick() {
+        Dnacid.LOGGER.warn("Book clicked");
     }
 
     @Override
@@ -100,13 +112,13 @@ public class ProteinConstructorScreen extends AbstractRecipeBookScreen<ProteinCo
             this.setFocused(this.betterRecipeBookComponent);
             return true;
         } else {
-            return super.mouseClicked(d, e, i);
+            return this.widthTooNarrow && this.betterRecipeBookComponent.isVisible() || super.mouseClicked(d, e, i);
         }
     }
 
     @Override
     protected boolean isHovering(int i, int j, int k, int l, double d, double e) {
-        return super.isHovering(i, j, k, l, d, e);
+        return (!this.widthTooNarrow || !this.betterRecipeBookComponent.isVisible()) && super.isHovering(i, j, k, l, d, e);
     }
 
     @Override
@@ -123,11 +135,13 @@ public class ProteinConstructorScreen extends AbstractRecipeBookScreen<ProteinCo
 
     @Override
     public void recipesUpdated() {
+        Dnacid.LOGGER.error("RU");
         this.betterRecipeBookComponent.recipesUpdated();
     }
 
     @Override
     public void fillGhostRecipe(RecipeDisplay recipeDisplay) {
+        Dnacid.LOGGER.error("FGR");
         this.betterRecipeBookComponent.fillGhostRecipe(recipeDisplay);
     }
 }
