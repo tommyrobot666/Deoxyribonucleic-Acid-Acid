@@ -1,6 +1,7 @@
 package lommie.dnacid.recipe;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -13,7 +14,7 @@ public class ProteinConstructorRecipeSerializer implements RecipeSerializer<Prot
 
     @Override
     public @NotNull
-    com.mojang.serialization.MapCodec<ProteinConstructorRecipe> codec() {
+    MapCodec<ProteinConstructorRecipe> codec() {
         // Note: the recipe ID is not in the JSON itself—it is provided externally.
         // Here we decode the group, pattern, and result.
         return RecordCodecBuilder.mapCodec(instance -> instance.group(

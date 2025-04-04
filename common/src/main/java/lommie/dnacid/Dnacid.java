@@ -2,6 +2,8 @@ package lommie.dnacid;
 
 
 import com.mojang.serialization.Codec;
+import dev.architectury.event.events.common.LifecycleEvent;
+import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
@@ -27,9 +29,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.crafting.RecipeBookCategory;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -44,6 +45,8 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 
 public final class Dnacid {
@@ -51,6 +54,7 @@ public final class Dnacid {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public static final List<Character> AMINO_ACID_CHARS = List.of('A','R','N','D','C','Q','E','G','H','I','L','K','M','F','P','S','T','W','Y','V');
+    public static List<RecipeDisplayEntry> ProteinConstructorRecipeDisplayEntries = List.of();
 
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(MOD_ID, Registries.ITEM);
@@ -80,6 +84,7 @@ public final class Dnacid {
             TestMutationEffect::new
     );
 */
+    public static final ResourceLocation PROTEIN_CONSTRUCTOR_RECIPE_DISPLAY_ENTRIES_PACKET_ID = ResourceLocation.tryBuild(MOD_ID, "protein_constructor_recipe_display_entries_packet");
 
     public static final RegistrySupplier<RecipeType<ProteinConstructorRecipe>> PROTEIN_CONSTRUCTOR_RECIPE_TYPE =
             RECIPE_TYPES.register("protein_constructor", () -> ProteinConstructorRecipeType.INSTANCE);
@@ -207,5 +212,41 @@ public final class Dnacid {
         ITEMS.register();
 
         //MUTATION_EFFECTS.register();
+
+        LifecycleEvent.SERVER_STARTED.register((server)->{
+            //AtomicInteger others = new AtomicInteger();
+            ArrayList<RecipeDisplayEntry> RecipeDisplayEntries = new ArrayList<>();
+            server.getRecipeManager().getRecipes().forEach((i) ->{
+                if (i.value() instanceof ProteinConstructorRecipe){
+                    LOGGER.error("Loaded Recipe: {}",i.id());
+                    server.getRecipeManager().listDisplaysForRecipe(i.id(), RecipeDisplayEntries::add);
+                } /*else if (i.value() instanceof ShapedRecipe) {
+                    others.getAndIncrement();
+                }*/
+                    }
+            );
+            Dnacid.ProteinConstructorRecipeDisplayEntries = RecipeDisplayEntries;
+
+            /*
+            LOGGER.warn("oooo{}",others.get());
+
+            Stream<RecipeHolder<?>> PCRecipes = (Stream<RecipeHolder<?>>) server.getRecipeManager().getRecipes().stream().filter(i -> i.value() instanceof ProteinConstructorRecipe);
+            PCRecipes.forEach((i) ->{
+                server.getRecipeManager().listDisplaysForRecipe(i.id(),(ent) ->{
+                    //Dnacid.LOGGER.error("REC:{},IDX:{}",i.id(),ent);
+                });
+                server.getPlayerList().getPlayers().forEach((j) ->{
+                    if (!(j.getRecipeBook().contains(i.id()))) {
+                        j.getRecipeBook().add(i.id());
+                    }
+                });
+            });
+            Stream<RecipeHolder<?>> PCRecipes2 = (Stream<RecipeHolder<?>>) server.getRecipeManager().getRecipes().stream().filter(i -> i.value() instanceof ProteinConstructorRecipe);
+            LOGGER.warn("PCRecipes{}",PCRecipes2.toList().size());*/
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C,PROTEIN_CONSTRUCTOR_RECIPE_DISPLAY_ENTRIES_PACKET_ID,(buf,context) ->{
+
+        });
     }
 }

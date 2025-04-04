@@ -32,14 +32,15 @@ import java.util.OptionalInt;
 import java.util.function.Consumer;
 
 public class ProteinConstructorRecipeBookPage {
+/*
     List<RecipeCollection> alwaysTheRcipeCollections = List.of(
             new RecipeCollection(List.of(
-                    new RecipeDisplayEntry("RecipeDisplayId is like a list of all recipes, 0 -> boat" //new RecipeDisplayId(0),
+                    new RecipeDisplayEntry(new RecipeDisplayId(0),//"RecipeDisplayId is like a list of all recipes, 0 -> boat" //new RecipeDisplayId(0),
                             new ProteinConstructorRecipe("", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "idk").toShapedRecipe().display().getFirst(),
                             OptionalInt.empty(),
                             Dnacid.PROTEIN_CONSTRUCTOR_RECIPE_CATEGORY.get(),
                             Optional.of(List.of(Ingredient.of(Dnacid.AMINO_ACIDS.getFirst().get()))))
-            )));
+            )));*/
     private static final WidgetSprites PAGE_FORWARD_SPRITES = new WidgetSprites(ResourceLocation.withDefaultNamespace("recipe_book/page_forward"), ResourceLocation.withDefaultNamespace("recipe_book/page_forward_highlighted"));
     private static final WidgetSprites PAGE_BACKWARD_SPRITES = new WidgetSprites(ResourceLocation.withDefaultNamespace("recipe_book/page_backward"), ResourceLocation.withDefaultNamespace("recipe_book/page_backward_highlighted"));
     private final List<ProteinConstructorRecipeButton> buttons = Lists.newArrayListWithCapacity(20);
@@ -67,13 +68,14 @@ public class ProteinConstructorRecipeBookPage {
         for (int i = 0; i < 20; ++i) {
             this.buttons.add(new ProteinConstructorRecipeButton(slotSelectTime));
         }
-
-        this.recipeCollections = calculateRecipeCollections();
+        Dnacid.LOGGER.warn(Dnacid.ProteinConstructorRecipeDisplayEntries.toString());
+        this.recipeCollections = List.of(new RecipeCollection(Dnacid.ProteinConstructorRecipeDisplayEntries));//alwaysTheRcipeCollections;//calculateRecipeCollections();
     }
 
-    private List<RecipeCollection> calculateRecipeCollections() {
+    /*private List<RecipeCollection> calculateRecipeCollections() {
+        parent.minecraft.
         return alwaysTheRcipeCollections;
-    }
+    }*/
 
     public void init(Minecraft minecraft, int i, int j) {
         this.minecraft = minecraft;
@@ -92,6 +94,7 @@ public class ProteinConstructorRecipeBookPage {
 
     public void updateCollections(List<RecipeCollection> list, boolean bl, boolean bl2) {
         //this.recipeCollections = list;
+        Dnacid.LOGGER.error(list.toString());
         this.isFiltering = bl2;
         this.totalPages = (int) Math.ceil((double) list.size() / 20.0);
         if (this.totalPages <= this.currentPage || bl) {

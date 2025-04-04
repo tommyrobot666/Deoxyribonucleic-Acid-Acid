@@ -266,24 +266,28 @@ public class ProteinConstructorRecipeBookComponent<T extends RecipeBookMenu> imp
 
     private void updateCollections(boolean bl, boolean bl2) {
         assert this.selectedTab != null;
-        List<RecipeCollection> list = this.book.getCollection(this.selectedTab.getCategory());
-        List<RecipeCollection> list2 = Lists.newArrayList(list);
-        list2.removeIf((recipeCollection) -> !recipeCollection.hasAnySelected());
+        List<RecipeCollection> inList = this.book.getCollection(this.selectedTab.getCategory());
+        List<RecipeCollection> outList = Lists.newArrayList(inList);
+        //
+        this.recipeBookPage.updateCollections(outList, bl, bl2);
+        return;
+        /*
+        outList.removeIf((recipeCollection) -> !recipeCollection.hasAnySelected());
         assert this.searchBox != null;
         String string = this.searchBox.getValue();
         if (!string.isEmpty()) {
             ClientPacketListener clientPacketListener = this.minecraft.getConnection();
             if (clientPacketListener != null) {
                 ObjectSet<RecipeCollection> objectSet = new ObjectLinkedOpenHashSet<>(clientPacketListener.searchTrees().recipes().search(string.toLowerCase(Locale.ROOT)));
-                list2.removeIf((recipeCollection) -> !objectSet.contains(recipeCollection));
+                outList.removeIf((recipeCollection) -> !objectSet.contains(recipeCollection));
             }
         }
 
         if (bl2) {
-            list2.removeIf((recipeCollection) -> !recipeCollection.hasCraftable());
+            outList.removeIf((recipeCollection) -> !recipeCollection.hasCraftable());
         }
 
-        this.recipeBookPage.updateCollections(list2, bl, bl2);
+        this.recipeBookPage.updateCollections(outList, bl, bl2);*/
     }
 
     private void updateTabs(boolean bl) {
