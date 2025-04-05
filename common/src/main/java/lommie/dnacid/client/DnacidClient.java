@@ -1,7 +1,11 @@
 package lommie.dnacid.client;
 
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.platform.Platform;
+import dev.architectury.registry.menu.MenuRegistry;
+import lommie.dnacid.Dnacid;
 import lommie.dnacid.network.ProteinConstructorRecipeDisplayEntriesPacket;
+import lommie.dnacid.screens.ProteinConstructorScreen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -19,5 +23,8 @@ public class DnacidClient {
                 ProteinConstructorRecipeDisplayEntriesPacket.PACKET_CODEC,
                 ProteinConstructorRecipeDisplayEntriesPacket::receive
         );
+        if (Platform.isFabric()){
+            MenuRegistry.registerScreenFactory(Dnacid.PROTEIN_CONSTRUCTOR_MENU.get(), ProteinConstructorScreen::new);
+        }
     }
 }

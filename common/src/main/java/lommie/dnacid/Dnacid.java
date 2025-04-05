@@ -6,6 +6,7 @@ import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.impl.NetworkAggregator;
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.networking.transformers.PacketSink;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
@@ -211,9 +212,6 @@ public final class Dnacid {
         BLOCKS.register();
         BLOCKS_ENTITY_TYPES.register();
         MENUS.register();
-        if (Platform.isFabric()){
-            MenuRegistry.registerScreenFactory(Dnacid.PROTEIN_CONSTRUCTOR_MENU.get(), ProteinConstructorScreen::new);
-        }
         ITEMS.register();
 
         //MUTATION_EFFECTS.register();
@@ -253,7 +251,8 @@ public final class Dnacid {
                 recipeDisplayEntries.add(((RecipeManagerAccessor) server.getRecipeManager()).getAllDisplays().get(i).display());
             }*/
             Dnacid.proteinConstructorRecipeDisplayEntries = recipeDisplayEntries;
-            LOGGER.error("server ent:{},\ntemp:{}",proteinConstructorRecipeDisplayEntries,recipeDisplayEntries);
+            LOGGER.error("server ent:");
+            recipeDisplayEntries.forEach(i -> LOGGER.error("{}",i));
             /*
             LOGGER.warn("oooo{}",others.get());
 
@@ -273,8 +272,23 @@ public final class Dnacid {
         });
 
         PlayerEvent.PLAYER_JOIN.register((e) ->{
-            LOGGER.warn("on j:{}",proteinConstructorRecipeDisplayEntries);
-            NetworkManager.sendToPlayer(e,new ProteinConstructorRecipeDisplayEntriesPacket.PacketPayload(proteinConstructorRecipeDisplayEntries));
+            ArrayList<ResourceKey<Recipe<?>>> proteinConstructorRecipeIds = new ArrayList<>();
+            for (RecipeDisplayEntry entry : proteinConstructorRecipeDisplayEntries){
+                ((RecipeManagerAccessor) e.getServer().getRecipeManager()).getAllDisplays().forEach(i -> {
+                    if (i.display() == entry){
+                        proteinConstructorRecipeIds.add(i.parent().id());
+                    }
+                });
+            }
+            proteinConstructorRecipeIds.forEach(i -> {
+                if (!e.getRecipeBook().contains(i)) {
+                    e.getRecipeBook().add(i);
+                }
+            });
+            LOGGER.warn("on join:");
+            proteinConstructorRecipeDisplayEntries.forEach(i -> LOGGER.warn(i.toString()));
+            NetworkManager.collectPackets(PacketSink.ofPlayer(e), NetworkManager.serverToClient(), new ProteinConstructorRecipeDisplayEntriesPacket.PacketPayload(proteinConstructorRecipeDisplayEntries), e.registryAccess());
+                    //sendToPlayer(e,new ProteinConstructorRecipeDisplayEntriesPacket.PacketPayload(proteinConstructorRecipeDisplayEntries));
             //e.connection.send(NetworkAggregator.toPacket(NetworkManager.Side.S2C, new ProteinConstructorRecipeDisplayEntriesPacket.PacketPayload(proteinConstructorRecipeDisplayEntries)));//.toBufCustomPacketPayload(Objects.requireNonNull(e.getServer()).registryAccess())));
         });
     }

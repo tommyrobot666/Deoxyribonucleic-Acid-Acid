@@ -172,8 +172,6 @@ public class ProteinConstructorRecipeDisplayEntriesPacket {//extends BaseS2CMess
 
     @Environment(EnvType.CLIENT)
     public static void receive(PacketPayload payload, NetworkManager.PacketContext context) {
-        Dnacid.LOGGER.info(Dnacid.proteinConstructorRecipeDisplayEntries.toString());
         Dnacid.proteinConstructorRecipeDisplayEntries = payload.data;
-        Dnacid.LOGGER.info(Dnacid.proteinConstructorRecipeDisplayEntries.toString());
     }
 }

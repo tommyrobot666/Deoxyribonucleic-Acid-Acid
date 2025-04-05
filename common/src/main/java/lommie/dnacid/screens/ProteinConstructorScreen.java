@@ -54,7 +54,7 @@ public class ProteinConstructorScreen extends AbstractContainerScreen<ProteinCon
                 0f, 0f,                          // starting u and v in the texture
                 this.imageWidth, this.imageHeight, // size to draw on screen
                 this.imageWidth, this.imageHeight, // region width & height (the portion of the texture to use)
-                256, 256                         // texture’s full width & height (for UV mapping)
+                this.imageWidth, this.imageHeight                         // texture’s full width & height (for UV mapping)
         );
     }
 
@@ -66,6 +66,7 @@ public class ProteinConstructorScreen extends AbstractContainerScreen<ProteinCon
     @Override
     protected void init() {
         super.init();
+        Dnacid.LOGGER.info("screen size:{},{}",width,height);
         this.widthTooNarrow = this.width < 379;
         assert this.minecraft != null;
         this.betterRecipeBookComponent.init(this.width, this.height, this.minecraft, this.widthTooNarrow);

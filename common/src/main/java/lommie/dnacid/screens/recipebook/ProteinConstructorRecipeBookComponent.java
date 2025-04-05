@@ -116,7 +116,7 @@ public class ProteinConstructorRecipeBookComponent<T extends RecipeBookMenu> imp
         Objects.requireNonNull(recipeDisplay);
         ShapedCraftingRecipeDisplay shapedCraftingRecipeDisplay = (ShapedCraftingRecipeDisplay)recipeDisplay;
         List<Slot> list = ((AbstractCraftingMenu)this.menu).getInputGridSlots();
-        Dnacid.LOGGER.error(list.toString());
+        Dnacid.LOGGER.error("ghost:{}",list.toString());
         PlaceRecipeHelper.placeRecipe(((AbstractCraftingMenu)this.menu).getGridWidth(), ((AbstractCraftingMenu)this.menu).getGridHeight(), shapedCraftingRecipeDisplay.width(), shapedCraftingRecipeDisplay.height(), shapedCraftingRecipeDisplay.ingredients(), (slotDisplay, ix, jx, k) -> {
             Slot slot = list.get(ix);
             try {
