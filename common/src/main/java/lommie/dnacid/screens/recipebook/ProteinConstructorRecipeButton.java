@@ -46,7 +46,6 @@ public class ProteinConstructorRecipeButton extends RecipeButton {
     
     public void init(RecipeCollection recipeCollection, boolean filtering, ProteinConstructorRecipeBookPage recipeBookPage, ContextMap contextMap) {
         this.collection = recipeCollection;
-        //Dnacid.LOGGER.error(recipeCollection.getRecipes().toString());
         List<RecipeDisplayEntry> list = recipeCollection.getRecipes();//recipeCollection.getSelectedRecipes(filtering ? RecipeCollection.CraftableStatus.CRAFTABLE : RecipeCollection.CraftableStatus.ANY);
         this.selectedEntries = list.stream().map((recipeDisplayEntry) -> new ResolvedEntry(recipeDisplayEntry.id(), recipeDisplayEntry.resultItems(contextMap))).toList();
         this.allRecipesHaveSameResultDisplay = allRecipesHaveSameResultDisplay(this.selectedEntries);
@@ -63,13 +62,11 @@ public class ProteinConstructorRecipeButton extends RecipeButton {
     }
 
     private static boolean allRecipesHaveSameResultDisplay(List<ResolvedEntry> list) {
-        Iterator<ItemStack> iterator = list.stream().flatMap((resolvedEntry) -> {
-            return resolvedEntry.displayItems().stream();
-        }).iterator();
+        Iterator<ItemStack> iterator = list.stream().flatMap((resolvedEntry) -> resolvedEntry.displayItems().stream()).iterator();
         if (!iterator.hasNext()) {
             return true;
         } else {
-            ItemStack itemStack = (ItemStack)iterator.next();
+            ItemStack itemStack = iterator.next();
 
             ItemStack itemStack2;
             do {
@@ -77,7 +74,7 @@ public class ProteinConstructorRecipeButton extends RecipeButton {
                     return true;
                 }
 
-                itemStack2 = (ItemStack)iterator.next();
+                itemStack2 = iterator.next();
             } while(ItemStack.isSameItemSameComponents(itemStack, itemStack2));
 
             return false;
@@ -149,7 +146,7 @@ public class ProteinConstructorRecipeButton extends RecipeButton {
         }
         int k = i / j;
         int l = i - j * k;
-        return ((ResolvedEntry)this.selectedEntries.get(l)).selectItem(k);
+        return this.selectedEntries.get(l).selectItem(k);
     }
 
     public @NotNull List<Component> getTooltipText(ItemStack itemStack) {

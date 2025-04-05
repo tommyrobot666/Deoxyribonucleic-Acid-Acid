@@ -16,7 +16,7 @@ public class MutationEffect {
     /**
      * @return returns whether effect should be removed
      * */
-    boolean mutationTick(MutationEffectContainer mutationEffectContainer){
+    public boolean mutationTick(MutationEffectContainer mutationEffectContainer){
         if (timeLeft == 0){
             return false;
         }else if (this.timeLeft > 0) {

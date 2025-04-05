@@ -23,13 +23,8 @@ public class ProteinConstructorRecipe implements Recipe<RecipeInput> {
     final String patternString;
     final String output;
 
-    //public static final Map<Character, Ingredient> KEY_MAPPING = ImmutableMap.of();
-
     private static Map<Character, Ingredient> generateKeyMapping() {
         HashMap<Character,Ingredient> map = new HashMap<>(Dnacid.AMINO_ACID_CHARS.size());
-        /*for (Character c : Dnacid.AMINO_ACID_CHARS){
-            map.put(c, Ingredient.of((idk).someMethod(ResourceLocation.tryBuild(Dnacid.MOD_ID,"amino_acid_"+c))));
-        }*/
         for (int i = 0; i < Dnacid.AMINO_ACID_CHARS.size(); i++) {
             map.put(Dnacid.AMINO_ACID_CHARS.get(i), Ingredient.of(Dnacid.AMINO_ACIDS.get(i).get()));
         }
@@ -42,13 +37,6 @@ public class ProteinConstructorRecipe implements Recipe<RecipeInput> {
         this.group = group;
         this.patternString = patternString;
         this.output = output;
-
-        /*
-        try {
-            this.getClass().getField("KEY_MAPPING").set(this,generateKeyMapping());
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }*/
     }
 
     public ProteinConstructorRecipe(String group, String patternString, String output) {
@@ -104,13 +92,6 @@ public class ProteinConstructorRecipe implements Recipe<RecipeInput> {
             int end = start + rowLength;
             rows.add(paddedPatternString.substring(start, end));
         }
-        /*Set<Character> uniqueChars = patternString.chars()                 // IntStream of char codes
-                .mapToObj(c -> (char) c)    // Convert int to Character
-                .collect(Collectors.toSet());
-        Map<Character, Ingredient> filteredMap = generateKeyMapping().entrySet()
-                .stream()
-                .filter(entry -> uniqueChars.contains(entry.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));*/
         // Use the built-in factory method to create a ShapedRecipePattern.
         ShapedRecipePattern shapedPattern = new ShapedRecipePattern(5,40,thatList(generateKeyMapping(),paddedPatternString),Optional.of(new ShapedRecipePattern.Data(generateKeyMapping(),rows)));
         // Create and return a new ShapedRecipe.

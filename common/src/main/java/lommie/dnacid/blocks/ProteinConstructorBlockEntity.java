@@ -4,39 +4,28 @@ import lommie.dnacid.Dnacid;
 import lommie.dnacid.recipe.ProteinConstructorRecipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.StackedItemContents;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeInput;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.SimpleContainer;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
 
 public class ProteinConstructorBlockEntity extends BlockEntity implements RecipeCraftingHolder, StackedContentsCompatible {
     private final SimpleContainer container = new SimpleContainer(201); // 200 input slots + 1 output slot
 
     public ProteinConstructorBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(Dnacid.PROTEIN_CONSTRUCTOR_ENTITY.get(), blockPos, blockState);
-        //container.setItem(200,new ItemStack(Dnacid.SOAP.get()));
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, ProteinConstructorBlockEntity te) {

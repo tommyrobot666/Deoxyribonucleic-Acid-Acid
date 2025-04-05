@@ -202,8 +202,6 @@ public final class Dnacid {
     );
 
     public static void init() {
-        //LOGGER.error(AMINO_ACIDS.toString());
-
         RECIPE_SERIALIZERS.register();
         RECIPE_TYPES.register();
         RECIPE_BOOK_CATEGORIES.register();
@@ -217,58 +215,23 @@ public final class Dnacid {
         //MUTATION_EFFECTS.register();
 
         LifecycleEvent.SERVER_STARTED.register((server)->{
-            //AtomicInteger others = new AtomicInteger();
-            //ArrayList<RecipeDisplayEntry> recipeDisplayEntries = new ArrayList<>();
             ArrayList<ResourceKey<Recipe<?>>> keys = new ArrayList<>();
             server.getRecipeManager().getRecipes().forEach((i) ->{
                 if (i.value() instanceof ProteinConstructorRecipe){
                     LOGGER.error("Loaded Recipe: {}",i.id());
                     keys.add(i.id());
-                    /*server.getRecipeManager().listDisplaysForRecipe(i.id(), (e) ->{
-                        LOGGER.info(e.toString());
-                        recipeDisplayEntries.add(e);
-                    });*/
-                } /*else if (i.value() instanceof ShapedRecipe) {
-                    others.getAndIncrement();
-                }*/
+                }
                     }
             );
-            LOGGER.info("key:{}",keys);
-            LOGGER.warn("IS THERE ANY!?:{}",((RecipeManagerAccessor) server.getRecipeManager()).getRecipeToDisplay().get(keys.getFirst()));
-            /*ArrayList<Integer> PCRecipesIdx = new ArrayList<>();
-            for (int i = 0; i < server.getRecipeManager().getRecipes().size(); i++) {
-                if (server.getRecipeManager().getRecipes().stream().toList().get(i).value() instanceof ProteinConstructorRecipe) {
-                    PCRecipesIdx.add(i);
-                }
-            }*/
             ArrayList<RecipeDisplayEntry> recipeDisplayEntries = new ArrayList<>();
             ((RecipeManagerAccessor) server.getRecipeManager()).getAllDisplays().stream().forEach((sdi) ->{
                 if (keys.contains(sdi.parent().id())){
                     recipeDisplayEntries.add(sdi.display());
                 }
             });
-            /*for (int i : PCRecipesIdx){
-                recipeDisplayEntries.add(((RecipeManagerAccessor) server.getRecipeManager()).getAllDisplays().get(i).display());
-            }*/
             Dnacid.proteinConstructorRecipeDisplayEntries = recipeDisplayEntries;
             LOGGER.error("server ent:");
             recipeDisplayEntries.forEach(i -> LOGGER.error("{}",i));
-            /*
-            LOGGER.warn("oooo{}",others.get());
-
-            Stream<RecipeHolder<?>> PCRecipes = (Stream<RecipeHolder<?>>) server.getRecipeManager().getRecipes().stream().filter(i -> i.value() instanceof ProteinConstructorRecipe);
-            PCRecipes.forEach((i) ->{
-                server.getRecipeManager().listDisplaysForRecipe(i.id(),(ent) ->{
-                    //Dnacid.LOGGER.error("REC:{},IDX:{}",i.id(),ent);
-                });
-                server.getPlayerList().getPlayers().forEach((j) ->{
-                    if (!(j.getRecipeBook().contains(i.id()))) {
-                        j.getRecipeBook().add(i.id());
-                    }
-                });
-            });
-            Stream<RecipeHolder<?>> PCRecipes2 = (Stream<RecipeHolder<?>>) server.getRecipeManager().getRecipes().stream().filter(i -> i.value() instanceof ProteinConstructorRecipe);
-            LOGGER.warn("PCRecipes{}",PCRecipes2.toList().size());*/
         });
 
         PlayerEvent.PLAYER_JOIN.register((e) ->{
@@ -288,8 +251,6 @@ public final class Dnacid {
             LOGGER.warn("on join:");
             proteinConstructorRecipeDisplayEntries.forEach(i -> LOGGER.warn(i.toString()));
             NetworkManager.collectPackets(PacketSink.ofPlayer(e), NetworkManager.serverToClient(), new ProteinConstructorRecipeDisplayEntriesPacket.PacketPayload(proteinConstructorRecipeDisplayEntries), e.registryAccess());
-                    //sendToPlayer(e,new ProteinConstructorRecipeDisplayEntriesPacket.PacketPayload(proteinConstructorRecipeDisplayEntries));
-            //e.connection.send(NetworkAggregator.toPacket(NetworkManager.Side.S2C, new ProteinConstructorRecipeDisplayEntriesPacket.PacketPayload(proteinConstructorRecipeDisplayEntries)));//.toBufCustomPacketPayload(Objects.requireNonNull(e.getServer()).registryAccess())));
         });
     }
 }
