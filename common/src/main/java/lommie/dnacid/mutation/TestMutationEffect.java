@@ -3,17 +3,10 @@ package lommie.dnacid.mutation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 
-public class TestMutationEffect implements MutationEffect{
+public class TestMutationEffect extends MutationEffect{
     @Override
-    public boolean mutationTick(MutationEffectContainer mutationEffectContainer) {
-        switch (mutationEffectContainer.getMutationCreatureType()){
-            case PLAYER -> {
-                ServerPlayer player = (ServerPlayer) mutationEffectContainer;
-                player.setGameMode(GameType.ADVENTURE);
-                break;
-            }
-        }
-
+    public boolean playerMutationTick(ServerPlayer player) {
+        player.setGameMode(GameType.ADVENTURE);
         return false;
     }
 }
