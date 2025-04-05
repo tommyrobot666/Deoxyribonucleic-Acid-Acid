@@ -3,6 +3,8 @@ package lommie.dnacid;
 
 import com.mojang.serialization.Codec;
 import dev.architectury.event.events.common.LifecycleEvent;
+import dev.architectury.event.events.common.PlayerEvent;
+import dev.architectury.impl.NetworkAggregator;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.CreativeTabRegistry;
@@ -12,6 +14,8 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import lommie.dnacid.blocks.ProteinConstructorBlock;
 import lommie.dnacid.blocks.ProteinConstructorBlockEntity;
 import lommie.dnacid.items.AminoAcidContainingItem;
+import lommie.dnacid.mixin.RecipeManagerAccessor;
+import lommie.dnacid.network.ProteinConstructorRecipeDisplayEntriesPacket;
 import lommie.dnacid.recipe.ProteinConstructorRecipe;
 import lommie.dnacid.recipe.ProteinConstructorRecipeSerializer;
 import lommie.dnacid.recipe.ProteinConstructorRecipeType;
@@ -44,9 +48,8 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 
 public final class Dnacid {
@@ -54,7 +57,10 @@ public final class Dnacid {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public static final List<Character> AMINO_ACID_CHARS = List.of('A','R','N','D','C','Q','E','G','H','I','L','K','M','F','P','S','T','W','Y','V');
-    public static List<RecipeDisplayEntry> ProteinConstructorRecipeDisplayEntries = List.of();
+    public static List<RecipeDisplayEntry> proteinConstructorRecipeDisplayEntries = List.of();
+    public void setProteinConstructorRecipeDisplayEntries(List<RecipeDisplayEntry> ls){
+        proteinConstructorRecipeDisplayEntries = ls;
+    }
 
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(MOD_ID, Registries.ITEM);
@@ -84,7 +90,6 @@ public final class Dnacid {
             TestMutationEffect::new
     );
 */
-    public static final ResourceLocation PROTEIN_CONSTRUCTOR_RECIPE_DISPLAY_ENTRIES_PACKET_ID = ResourceLocation.tryBuild(MOD_ID, "protein_constructor_recipe_display_entries_packet");
 
     public static final RegistrySupplier<RecipeType<ProteinConstructorRecipe>> PROTEIN_CONSTRUCTOR_RECIPE_TYPE =
             RECIPE_TYPES.register("protein_constructor", () -> ProteinConstructorRecipeType.INSTANCE);
@@ -215,18 +220,40 @@ public final class Dnacid {
 
         LifecycleEvent.SERVER_STARTED.register((server)->{
             //AtomicInteger others = new AtomicInteger();
-            ArrayList<RecipeDisplayEntry> RecipeDisplayEntries = new ArrayList<>();
+            //ArrayList<RecipeDisplayEntry> recipeDisplayEntries = new ArrayList<>();
+            ArrayList<ResourceKey<Recipe<?>>> keys = new ArrayList<>();
             server.getRecipeManager().getRecipes().forEach((i) ->{
                 if (i.value() instanceof ProteinConstructorRecipe){
                     LOGGER.error("Loaded Recipe: {}",i.id());
-                    server.getRecipeManager().listDisplaysForRecipe(i.id(), RecipeDisplayEntries::add);
+                    keys.add(i.id());
+                    /*server.getRecipeManager().listDisplaysForRecipe(i.id(), (e) ->{
+                        LOGGER.info(e.toString());
+                        recipeDisplayEntries.add(e);
+                    });*/
                 } /*else if (i.value() instanceof ShapedRecipe) {
                     others.getAndIncrement();
                 }*/
                     }
             );
-            Dnacid.ProteinConstructorRecipeDisplayEntries = RecipeDisplayEntries;
-
+            LOGGER.info("key:{}",keys);
+            LOGGER.warn("IS THERE ANY!?:{}",((RecipeManagerAccessor) server.getRecipeManager()).getRecipeToDisplay().get(keys.getFirst()));
+            /*ArrayList<Integer> PCRecipesIdx = new ArrayList<>();
+            for (int i = 0; i < server.getRecipeManager().getRecipes().size(); i++) {
+                if (server.getRecipeManager().getRecipes().stream().toList().get(i).value() instanceof ProteinConstructorRecipe) {
+                    PCRecipesIdx.add(i);
+                }
+            }*/
+            ArrayList<RecipeDisplayEntry> recipeDisplayEntries = new ArrayList<>();
+            ((RecipeManagerAccessor) server.getRecipeManager()).getAllDisplays().stream().forEach((sdi) ->{
+                if (keys.contains(sdi.parent().id())){
+                    recipeDisplayEntries.add(sdi.display());
+                }
+            });
+            /*for (int i : PCRecipesIdx){
+                recipeDisplayEntries.add(((RecipeManagerAccessor) server.getRecipeManager()).getAllDisplays().get(i).display());
+            }*/
+            Dnacid.proteinConstructorRecipeDisplayEntries = recipeDisplayEntries;
+            LOGGER.error("server ent:{},\ntemp:{}",proteinConstructorRecipeDisplayEntries,recipeDisplayEntries);
             /*
             LOGGER.warn("oooo{}",others.get());
 
@@ -245,8 +272,10 @@ public final class Dnacid {
             LOGGER.warn("PCRecipes{}",PCRecipes2.toList().size());*/
         });
 
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C,PROTEIN_CONSTRUCTOR_RECIPE_DISPLAY_ENTRIES_PACKET_ID,(buf,context) ->{
-
+        PlayerEvent.PLAYER_JOIN.register((e) ->{
+            LOGGER.warn("on j:{}",proteinConstructorRecipeDisplayEntries);
+            NetworkManager.sendToPlayer(e,new ProteinConstructorRecipeDisplayEntriesPacket.PacketPayload(proteinConstructorRecipeDisplayEntries));
+            //e.connection.send(NetworkAggregator.toPacket(NetworkManager.Side.S2C, new ProteinConstructorRecipeDisplayEntriesPacket.PacketPayload(proteinConstructorRecipeDisplayEntries)));//.toBufCustomPacketPayload(Objects.requireNonNull(e.getServer()).registryAccess())));
         });
     }
 }

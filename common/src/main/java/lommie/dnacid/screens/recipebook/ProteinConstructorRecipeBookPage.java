@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import lommie.dnacid.Dnacid;
 import lommie.dnacid.notmixin.ILocalPlayerMixin;
-import lommie.dnacid.recipe.ProteinConstructorRecipe;
 import net.minecraft.client.ClientRecipeBook;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,16 +18,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
 import net.minecraft.world.item.crafting.display.RecipeDisplayId;
 import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.function.Consumer;
 
 public class ProteinConstructorRecipeBookPage {
@@ -68,8 +63,8 @@ public class ProteinConstructorRecipeBookPage {
         for (int i = 0; i < 20; ++i) {
             this.buttons.add(new ProteinConstructorRecipeButton(slotSelectTime));
         }
-        Dnacid.LOGGER.warn(Dnacid.ProteinConstructorRecipeDisplayEntries.toString());
-        this.recipeCollections = List.of(new RecipeCollection(Dnacid.ProteinConstructorRecipeDisplayEntries));//alwaysTheRcipeCollections;//calculateRecipeCollections();
+        Dnacid.LOGGER.warn("b page:{}",Dnacid.proteinConstructorRecipeDisplayEntries.toString());
+        this.recipeCollections = List.of(new RecipeCollection(Dnacid.proteinConstructorRecipeDisplayEntries));//alwaysTheRcipeCollections;//calculateRecipeCollections();
     }
 
     /*private List<RecipeCollection> calculateRecipeCollections() {
@@ -94,7 +89,7 @@ public class ProteinConstructorRecipeBookPage {
 
     public void updateCollections(List<RecipeCollection> list, boolean bl, boolean bl2) {
         //this.recipeCollections = list;
-        Dnacid.LOGGER.error(list.toString());
+        Dnacid.LOGGER.error("page uC:",list.toString());
         this.isFiltering = bl2;
         this.totalPages = (int) Math.ceil((double) list.size() / 20.0);
         if (this.totalPages <= this.currentPage || bl) {

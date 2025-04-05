@@ -8,6 +8,8 @@
     "RecipeButtonAccessor"
   ],
   "mixins": [
+    "RecipeDisplayMixin",
+    "RecipeManagerAccessor",
     "ServerPlayerMixin"
   ],
   "injectors": {

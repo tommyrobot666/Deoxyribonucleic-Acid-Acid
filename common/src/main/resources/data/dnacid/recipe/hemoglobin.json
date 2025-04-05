@@ -1,5 +1,6 @@
 {
   "type": "dnacid:protein_constructor",
   "pattern": "MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYH",
-  "result": "Hemoglobin"
+  "result": "Hemoglobin",
+  "feature_flags": ["vanilla"]
 }

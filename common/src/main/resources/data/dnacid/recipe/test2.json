@@ -1,5 +1,6 @@
 {
   "type": "dnacid:protein_constructor",
   "pattern": "A",
-  "result": "qwer"
+  "result": "qwer",
+  "feature_flags": ["vanilla"]
 }

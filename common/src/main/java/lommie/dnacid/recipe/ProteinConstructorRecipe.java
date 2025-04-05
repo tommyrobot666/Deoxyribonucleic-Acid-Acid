@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,6 +76,11 @@ public class ProteinConstructorRecipe implements Recipe<RecipeInput> {
     }
 
     @Override
+    public List<RecipeDisplay> display() {
+        return toShapedRecipe().display();
+    }
+
+    @Override
     public @NotNull PlacementInfo placementInfo() {
         return this.toShapedRecipe().placementInfo();
     }
@@ -133,5 +139,10 @@ public class ProteinConstructorRecipe implements Recipe<RecipeInput> {
             }
         }
         return list;
+    }
+
+    @Override
+    public boolean isSpecial() {
+        return false;
     }
 }
