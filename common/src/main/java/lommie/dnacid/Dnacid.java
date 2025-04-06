@@ -2,12 +2,11 @@ package lommie.dnacid;
 
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.Lifecycle;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
-import dev.architectury.impl.NetworkAggregator;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.transformers.PacketSink;
-import dev.architectury.platform.Platform;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
@@ -23,10 +22,15 @@ import lommie.dnacid.recipe.ProteinConstructorRecipe;
 import lommie.dnacid.recipe.ProteinConstructorRecipeSerializer;
 import lommie.dnacid.recipe.ProteinConstructorRecipeType;
 import lommie.dnacid.screens.*;
+import net.minecraft.core.DefaultedMappedRegistry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -50,6 +54,8 @@ import org.slf4j.LoggerFactory;
 
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -84,8 +90,14 @@ public final class Dnacid {
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES =
             DeferredRegister.create(MOD_ID, Registries.RECIPE_TYPE);
 
+    public static final ResourceKey<Registry<MutationEffectType<?>>> MUTATION_EFFECT_TYPE_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.tryBuild(MOD_ID, "mutation_effects"));
+
+    public static final DefaultedMappedRegistry<MutationEffectType<?>> MUTATION_EFFECT_TYPE_REGISTRY =
+            new DefaultedMappedRegistry<>(MOD_ID+":test", MUTATION_EFFECT_TYPE_KEY, Lifecycle.stable(),false);
+
     public static final DeferredRegister<MutationEffectType<?>> MUTATION_EFFECT_TYPES =
-            DeferredRegister.create(MOD_ID, ResourceKey.createRegistryKey(ResourceLocation.tryBuild(MOD_ID,"mutation_effects")));
+            DeferredRegister.create(MOD_ID, MUTATION_EFFECT_TYPE_KEY);
 
 
     public static final RegistrySupplier<MutationEffectType<?>> TEST_MUTATION_EFFECT_TYPE = MUTATION_EFFECT_TYPES.register(
@@ -214,33 +226,53 @@ public final class Dnacid {
         MENUS.register();
         ITEMS.register();
 
+        //Registry.register(BuiltInRegistries.REGISTRY, MUTATION_EFFECT_TYPE_KEY.location(), MUTATION_EFFECT_TYPE_REGISTRY);
+
+        Class<?> registryBootstrapClass;
+        try {
+            registryBootstrapClass = Class.forName("net.minecraft.core.registries.BuiltInRegistries$RegistryBootstrap");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Method internalRegister;
+        try {
+            internalRegister = BuiltInRegistries.class.getDeclaredMethod("internalRegister", ResourceKey.class, WritableRegistry.class, registryBootstrapClass);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+        internalRegister.setAccessible(true);
+        try {
+            internalRegister.invoke(null,MUTATION_EFFECT_TYPE_KEY,MUTATION_EFFECT_TYPE_REGISTRY,null);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
         MUTATION_EFFECT_TYPES.register();
 
-        LifecycleEvent.SERVER_STARTED.register((server)->{
+        LifecycleEvent.SERVER_STARTED.register((server) -> {
             ArrayList<ResourceKey<Recipe<?>>> keys = new ArrayList<>();
-            server.getRecipeManager().getRecipes().forEach((i) ->{
-                if (i.value() instanceof ProteinConstructorRecipe){
-                    LOGGER.error("Loaded Recipe: {}",i.id());
+            server.getRecipeManager().getRecipes().forEach((i) -> {
+                if (i.value() instanceof ProteinConstructorRecipe) {
+                    LOGGER.error("Loaded Recipe: {}", i.id());
                     keys.add(i.id());
                 }
                     }
             );
             ArrayList<RecipeDisplayEntry> recipeDisplayEntries = new ArrayList<>();
-            ((RecipeManagerAccessor) server.getRecipeManager()).getAllDisplays().stream().forEach((sdi) ->{
-                if (keys.contains(sdi.parent().id())){
+            ((RecipeManagerAccessor) server.getRecipeManager()).getAllDisplays().stream().forEach((sdi) -> {
+                if (keys.contains(sdi.parent().id())) {
                     recipeDisplayEntries.add(sdi.display());
                 }
             });
             Dnacid.proteinConstructorRecipeDisplayEntries = recipeDisplayEntries;
             LOGGER.error("server ent:");
-            recipeDisplayEntries.forEach(i -> LOGGER.error("{}",i));
+            recipeDisplayEntries.forEach(i -> LOGGER.error("{}", i));
         });
 
-        PlayerEvent.PLAYER_JOIN.register((e) ->{
+        PlayerEvent.PLAYER_JOIN.register((e) -> {
             ArrayList<ResourceKey<Recipe<?>>> proteinConstructorRecipeIds = new ArrayList<>();
-            for (RecipeDisplayEntry entry : proteinConstructorRecipeDisplayEntries){
+            for (RecipeDisplayEntry entry : proteinConstructorRecipeDisplayEntries) {
                 ((RecipeManagerAccessor) e.getServer().getRecipeManager()).getAllDisplays().forEach(i -> {
-                    if (i.display() == entry){
+                    if (i.display() == entry) {
                         proteinConstructorRecipeIds.add(i.parent().id());
                     }
                 });

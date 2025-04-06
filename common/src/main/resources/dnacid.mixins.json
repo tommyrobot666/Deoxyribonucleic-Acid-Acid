@@ -10,6 +10,7 @@
   "mixins": [
     "RecipeDisplayMixin",
     "RecipeManagerAccessor",
+    "RegistriesAccessor",
     "ServerPlayerMixin"
   ],
   "injectors": {

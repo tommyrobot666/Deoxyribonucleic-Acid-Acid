@@ -19,6 +19,9 @@
     ],
     "client": [
       "lommie.dnacid.fabric.client.DnacidFabricClient"
+    ],
+    "fabric-datagen": [
+      "lommie.dnacid.fabric.datageneration.DataGenerator"
     ]
   },
   "mixins": [
@@ -26,7 +29,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.16.10",
-    "minecraft": "~1.21.4",
+    "minecraft": "1.21.x",
     "java": ">=21",
     "architectury": ">=15.0.1",
     "fabric-api": "*"

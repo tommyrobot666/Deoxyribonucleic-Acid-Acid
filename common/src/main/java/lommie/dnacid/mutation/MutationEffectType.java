@@ -21,7 +21,7 @@ public class MutationEffectType<E extends MutationEffect> {
         this.codec = codec;
         this.defaultMutationEffect = defaultMutationEffect;
         this.aminoAcids = aminoAcids;
-        this.generatedRecipe = Optional.of(generateRecipe(aminoAcids,recipeLocation));
+        this.generatedRecipe = aminoAcids.isPresent() ? Optional.of(generateRecipe(aminoAcids,recipeLocation)) : Optional.empty();
     }
 
     private ProteinConstructorRecipe generateRecipe(Optional<String> aminoAcids, ResourceLocation recipeLocation) {
