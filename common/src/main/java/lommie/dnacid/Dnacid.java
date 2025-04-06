@@ -16,6 +16,8 @@ import lommie.dnacid.blocks.ProteinConstructorBlock;
 import lommie.dnacid.blocks.ProteinConstructorBlockEntity;
 import lommie.dnacid.items.AminoAcidContainingItem;
 import lommie.dnacid.mixin.RecipeManagerAccessor;
+import lommie.dnacid.mutation.MutationEffectType;
+import lommie.dnacid.mutation.TestMutationEffect;
 import lommie.dnacid.network.ProteinConstructorRecipeDisplayEntriesPacket;
 import lommie.dnacid.recipe.ProteinConstructorRecipe;
 import lommie.dnacid.recipe.ProteinConstructorRecipeSerializer;
@@ -36,6 +38,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -49,7 +52,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 
@@ -81,16 +83,16 @@ public final class Dnacid {
             DeferredRegister.create(MOD_ID, Registries.RECIPE_SERIALIZER);
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES =
             DeferredRegister.create(MOD_ID, Registries.RECIPE_TYPE);
-/*
-    public static final DeferredRegister<MutationEffect> MUTATION_EFFECTS =
+
+    public static final DeferredRegister<MutationEffectType<?>> MUTATION_EFFECT_TYPES =
             DeferredRegister.create(MOD_ID, ResourceKey.createRegistryKey(ResourceLocation.tryBuild(MOD_ID,"mutation_effects")));
 
 
-    public static final RegistrySupplier<MutationEffect> TEST_MUTATION_EFFECT = MUTATION_EFFECTS.register(
+    public static final RegistrySupplier<MutationEffectType<?>> TEST_MUTATION_EFFECT_TYPE = MUTATION_EFFECT_TYPES.register(
             "test",
-            TestMutationEffect::new
+            () -> new MutationEffectType<>(Component.literal("Test"),new TestMutationEffect(-1, GameType.SPECTATOR),TestMutationEffect.STREAM_CODEC)
     );
-*/
+
 
     public static final RegistrySupplier<RecipeType<ProteinConstructorRecipe>> PROTEIN_CONSTRUCTOR_RECIPE_TYPE =
             RECIPE_TYPES.register("protein_constructor", () -> ProteinConstructorRecipeType.INSTANCE);
@@ -212,7 +214,7 @@ public final class Dnacid {
         MENUS.register();
         ITEMS.register();
 
-        //MUTATION_EFFECTS.register();
+        MUTATION_EFFECT_TYPES.register();
 
         LifecycleEvent.SERVER_STARTED.register((server)->{
             ArrayList<ResourceKey<Recipe<?>>> keys = new ArrayList<>();

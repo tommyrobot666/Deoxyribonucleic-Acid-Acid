@@ -13,9 +13,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 
 import java.util.List;
+import java.util.Objects;
 
 public class AminoAcidContainingItem extends Item {
     public AminoAcidContainingItem(Properties properties) {
@@ -38,7 +40,7 @@ public class AminoAcidContainingItem extends Item {
         }
 
         if (useOnContext.getLevel().getBlockState(useOnContext.getClickedPos()).is(Blocks.COPPER_BLOCK)){
-            ((MutationEffectContainer) useOnContext.getPlayer()).addMutationEffect(new TestMutationEffect());
+            ((MutationEffectContainer) Objects.requireNonNull(useOnContext.getPlayer())).addMutationEffect(new TestMutationEffect(-1, GameType.SPECTATOR));
             return InteractionResult.SUCCESS_SERVER;
         }
 

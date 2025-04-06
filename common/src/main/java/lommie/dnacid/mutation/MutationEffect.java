@@ -9,10 +9,6 @@ public class MutationEffect {
         this.timeLeft = timeLeft;
     }
 
-    MutationEffect(){
-        this(-1);
-    }
-
     /**
      * @return returns whether effect should be removed
      * */
