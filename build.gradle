@@ -68,3 +68,24 @@ subprojects {
         }
     }
 }
+
+tasks.register('mergeJars', Jar) {
+    group = "export"
+
+    archiveBaseName.set("$rootProject.archives_name-($project.name)-$project.version") // Correct way to set the base name for the JAR file in newer versions
+    archiveVersion.set(version) // Optionally set the version if needed
+    archiveFile.set(project.layout.buildDirectory.file("libs/${archiveBaseName.get()}.jar"))
+    // Merge the output of all subprojects' main classes
+    subprojects.each { subproject ->
+        from subproject.sourceSets.main.output
+        /*from subproject.configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }*/
+
+        from(subproject.file('src/main/resources/dnacid.mixins.json')) {
+            into("META-INF")
+        }
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
