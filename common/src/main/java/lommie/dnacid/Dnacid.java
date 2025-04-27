@@ -14,6 +14,9 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import lommie.dnacid.blocks.ProteinConstructorBlock;
 import lommie.dnacid.blocks.ProteinConstructorBlockEntity;
 import lommie.dnacid.items.AminoAcidContainingItem;
+import lommie.dnacid.items.BacteriaItem;
+import lommie.dnacid.items.components.BacteriaData;
+import lommie.dnacid.items.components.BacteriaDataComponentType;
 import lommie.dnacid.mixin.RecipeManagerAccessor;
 import lommie.dnacid.mutation.MutationEffectType;
 import lommie.dnacid.mutation.TestMutationEffect;
@@ -135,6 +138,10 @@ public final class Dnacid {
             }
     );
 
+    public static final RegistrySupplier<DataComponentType<BacteriaData>> BACTERIA_DATA_COMPONENT = COMPONENT_TYPES.register(
+            "bacteria_data",
+            BacteriaDataComponentType::new
+    );
 
 
     public static final RegistrySupplier<Block> PROTEIN_CONSTRUCTOR = BLOCKS.register(
@@ -177,6 +184,23 @@ public final class Dnacid {
                     .food(new FoodProperties(-1,0,true))
                     .arch$tab(THE_TAB)
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.tryBuild(MOD_ID,"soap")))
+            )
+    );
+
+    public static final RegistrySupplier<Item> BACTERIA = ITEMS.register("bacteria",
+            () -> new BacteriaItem(new Item.Properties()
+                    .food(new FoodProperties(1,1,false))
+                    .stacksTo(1)
+                    .arch$tab(THE_TAB)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.tryBuild(MOD_ID,"bacteria")))
+            )
+
+    );
+
+    public static final RegistrySupplier<Item> PETRI_DISH = ITEMS.register("petri_dish",
+            () -> new Item(new Item.Properties()
+                    .arch$tab(THE_TAB)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.tryBuild(MOD_ID,"petri_dish")))
             )
     );
 
