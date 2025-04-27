@@ -1,5 +1,5 @@
 plugins {
-    id 'dev.architectury.loom' version '1.9-SNAPSHOT' apply false
+    id 'dev.architectury.loom' version '1.10-SNAPSHOT' apply false
     id 'architectury-plugin' version '3.4-SNAPSHOT'
     id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
 }
@@ -78,10 +78,6 @@ tasks.register('mergeJars', Jar) {
     // Merge the output of all subprojects' main classes
     subprojects.each { subproject ->
         from subproject.sourceSets.main.output
-        /*from subproject.configurations.runtimeClasspath.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }*/
-
         from(subproject.file('src/main/resources/dnacid.mixins.json')) {
             into("META-INF")
         }
