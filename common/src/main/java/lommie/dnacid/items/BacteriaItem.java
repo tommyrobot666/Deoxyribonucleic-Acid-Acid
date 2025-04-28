@@ -13,17 +13,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
 import java.util.List;
+import java.util.Objects;
 
 public class BacteriaItem extends Item {
     public BacteriaItem(Properties properties) {
-        super(properties.component(Dnacid.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(false)));
+        super(properties.component(Dnacid.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(false,List.of())));
     }
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack bac, ItemStack other, Slot slot, ClickAction clickAction, Player player, SlotAccess slotAccess) {
-        BacteriaData data = bac.getComponents().get(Dnacid.BACTERIA_DATA_COMPONENT.get());
-        if (other.is(Dnacid.PETRI_DISH)){
-            bac.set(Dnacid.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(true));
+        BacteriaData data = Objects.requireNonNull(bac.getComponents().get(Dnacid.BACTERIA_DATA_COMPONENT.get()));
+        if (other.getItem().toString().equals("dnacid:petri_dish") && !data.petriDish()){
+            bac.set(Dnacid.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(true,data.effects()));
             other.shrink(1);
             return true;
         }
@@ -36,7 +37,7 @@ public class BacteriaItem extends Item {
         if (type.isAdvanced() && ((Player) bac.getEntityRepresentation()).isCreative()){
             tooltip.add(Component.literal("Creative mode AND advanced tooltips?!"));
             tooltip.add(Component.literal("NO, I will not allow this"));
-            tooltip.add(Component.literal("/ban ").withStyle(ChatFormatting.RED).append(((Player) bac.getEntityRepresentation()).getDisplayName()));
+            tooltip.add(Component.literal("/ban ").withStyle(ChatFormatting.RED).append(bac.getEntityRepresentation().getDisplayName()));
             return;
         }
 
