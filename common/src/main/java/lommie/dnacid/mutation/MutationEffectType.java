@@ -8,16 +8,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class MutationEffectType<E extends MutationEffect> {
     StreamCodec<RegistryFriendlyByteBuf, E> codec;
-    E defaultMutationEffect;
+    public Supplier<E> defaultMutationEffect;
     Optional<String> aminoAcids;
     Optional<ProteinConstructorRecipe> generatedRecipe;
-    Component name;
+    public Component name;
     private final ResourceKey<MutationEffectType<?>> key;
 
-    public MutationEffectType(Component name, E defaultMutationEffect, StreamCodec<RegistryFriendlyByteBuf, E> codec, Optional<String> aminoAcids, ResourceLocation recipeLocation, ResourceKey<MutationEffectType<?>> key) {
+    public MutationEffectType(Component name, Supplier<E> defaultMutationEffect, StreamCodec<RegistryFriendlyByteBuf, E> codec, Optional<String> aminoAcids, ResourceLocation recipeLocation, ResourceKey<MutationEffectType<?>> key) {
         this.name = name;
         this.codec = codec;
         this.defaultMutationEffect = defaultMutationEffect;
@@ -30,7 +31,7 @@ public class MutationEffectType<E extends MutationEffect> {
         return new ProteinConstructorRecipe(recipeLocation, recipeLocation.getPath(), aminoAcids.orElseThrow(), recipeLocation.getPath());
     }
 
-    public MutationEffectType(Component name, E defaultMutationEffect, StreamCodec<RegistryFriendlyByteBuf, E> codec, ResourceKey<MutationEffectType<?>> key) {
+    public MutationEffectType(Component name, Supplier<E> defaultMutationEffect, StreamCodec<RegistryFriendlyByteBuf, E> codec, ResourceKey<MutationEffectType<?>> key) {
         this(name, defaultMutationEffect, codec, Optional.empty(), ResourceLocation.withDefaultNamespace(""), key);
     }
 
@@ -38,7 +39,7 @@ public class MutationEffectType<E extends MutationEffect> {
         return key;
     }
 
-    public StreamCodec<RegistryFriendlyByteBuf, ? extends MutationEffect> streamCodec() {
+    public StreamCodec<RegistryFriendlyByteBuf, E> streamCodec() {
         return codec;
     }
 }

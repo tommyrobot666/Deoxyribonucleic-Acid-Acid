@@ -18,6 +18,7 @@ import lommie.dnacid.items.BacteriaItem;
 import lommie.dnacid.items.components.BacteriaData;
 import lommie.dnacid.items.components.BacteriaDataComponentType;
 import lommie.dnacid.mixin.RecipeManagerAccessor;
+import lommie.dnacid.mutation.MutationEffect;
 import lommie.dnacid.mutation.MutationEffectType;
 import lommie.dnacid.mutation.TestMutationEffect;
 import lommie.dnacid.network.ProteinConstructorRecipeDisplayEntriesPacket;
@@ -29,6 +30,8 @@ import net.minecraft.core.DefaultedMappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.WritableRegistry;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 
@@ -61,7 +64,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 
 public final class Dnacid {
@@ -105,7 +110,11 @@ public final class Dnacid {
 
     public static final RegistrySupplier<MutationEffectType<?>> TEST_MUTATION_EFFECT_TYPE = MUTATION_EFFECT_TYPES.register(
             "test",
-            () -> new MutationEffectType<>(Component.literal("Test"),new TestMutationEffect(-1, GameType.SPECTATOR),TestMutationEffect.STREAM_CODEC)
+            (Supplier<MutationEffectType<?>>) () -> new MutationEffectType<>(
+                    Component.literal("Test"),
+                    (Supplier<TestMutationEffect>) () -> new TestMutationEffect(-1, GameType.SPECTATOR),
+                    TestMutationEffect.STREAM_CODEC,
+                    ResourceKey.create(MUTATION_EFFECT_TYPE_KEY, ResourceLocation.tryBuild(MOD_ID,"test")))
     );
 
 
@@ -123,6 +132,26 @@ public final class Dnacid {
             )
     );
 
+    public static final RegistrySupplier<CreativeModeTab> PLASMIDS_TAB = TABS.register(
+            "plasmids", // Tab ID
+            () -> CreativeTabRegistry.create(
+                    (b) -> b.title(Component.translatable("category."+MOD_ID))
+                            .icon(() -> new ItemStack(Dnacid.PLASMID.get()))
+                            .displayItems(new CreativeModeTab.DisplayItemsGenerator() {
+                                @Override
+                                public void accept(CreativeModeTab.ItemDisplayParameters p, CreativeModeTab.Output o) {
+                                    p.holders().get(MUTATION_EFFECT_TYPE_KEY).ifPresent((r) -> {
+                                        for (Map.Entry<ResourceKey<MutationEffectType<?>>, MutationEffectType<?>> mutationEffectTypeEntry : r.value().entrySet()){
+                                        ItemStack stack = new ItemStack(PLASMID.get());
+                                        stack.set(MUTATION_EFFECT_COMPONENT.get(),mutationEffectTypeEntry.getValue().defaultMutationEffect.get());
+                                        o.accept(stack);
+                                    }});
+                                }
+                            })
+            )
+    );
+
+
     public static final RegistrySupplier<DataComponentType<String>> AMINO_ACIDS_COMPONENT = COMPONENT_TYPES.register(
             "amino_acids",
             () -> new DataComponentType<>() {
@@ -134,6 +163,21 @@ public final class Dnacid {
                 @Override
                 public @NotNull StreamCodec<? super RegistryFriendlyByteBuf, String> streamCodec() {
                     return ByteBufCodecs.STRING_UTF8;
+                }
+            }
+    );
+
+    public static final RegistrySupplier<DataComponentType<MutationEffect>> MUTATION_EFFECT_COMPONENT = COMPONENT_TYPES.register(
+            "mutation_effect",
+            () -> new DataComponentType<>() {
+                @Override
+                public Codec<MutationEffect> codec() {
+                    return null;
+                }
+
+                @Override
+                public @NotNull StreamCodec<? super RegistryFriendlyByteBuf, MutationEffect> streamCodec() {
+                    return StreamCodec.of((b,e) -> e.encode(b),MutationEffect::decode);
                 }
             }
     );
@@ -204,6 +248,14 @@ public final class Dnacid {
             )
     );
 
+    public static final RegistrySupplier<Item> PLASMID = ITEMS.register("plasmid",
+            () -> new Item(new Item.Properties()
+                    .component(MUTATION_EFFECT_COMPONENT.get(),new TestMutationEffect(100,GameType.SPECTATOR))
+                    .arch$tab(THE_TAB)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.tryBuild(MOD_ID,"plasmid")))
+            )
+    );
+
     public static final RegistrySupplier<Item> PROTEIN = ITEMS.register("protein",
             () -> new AminoAcidContainingItem(new Item.Properties()
                     .food(new FoodProperties(1,0.2f,false))
@@ -252,25 +304,7 @@ public final class Dnacid {
 
         //Registry.register(BuiltInRegistries.REGISTRY, MUTATION_EFFECT_TYPE_KEY.location(), MUTATION_EFFECT_TYPE_REGISTRY);
 
-        Class<?> registryBootstrapClass;
-        try {
-            registryBootstrapClass = Class.forName("net.minecraft.core.registries.BuiltInRegistries$RegistryBootstrap");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        Method internalRegister;
-        try {
-            internalRegister = BuiltInRegistries.class.getDeclaredMethod("internalRegister", ResourceKey.class, WritableRegistry.class, registryBootstrapClass);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-        internalRegister.setAccessible(true);
-        try {
-            internalRegister.invoke(null,MUTATION_EFFECT_TYPE_KEY,MUTATION_EFFECT_TYPE_REGISTRY,null);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-        MUTATION_EFFECT_TYPES.register();
+        registerMutationEffectTypeRegistry();
 
         LifecycleEvent.SERVER_STARTED.register((server) -> {
             ArrayList<ResourceKey<Recipe<?>>> keys = new ArrayList<>();
@@ -310,5 +344,27 @@ public final class Dnacid {
             proteinConstructorRecipeDisplayEntries.forEach(i -> LOGGER.warn(i.toString()));
             NetworkManager.collectPackets(PacketSink.ofPlayer(e), NetworkManager.serverToClient(), new ProteinConstructorRecipeDisplayEntriesPacket.PacketPayload(proteinConstructorRecipeDisplayEntries), e.registryAccess());
         });
+    }
+
+    private static void registerMutationEffectTypeRegistry() {
+        Class<?> registryBootstrapClass;
+        try {
+            registryBootstrapClass = Class.forName("net.minecraft.core.registries.BuiltInRegistries$RegistryBootstrap");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Method internalRegister;
+        try {
+            internalRegister = BuiltInRegistries.class.getDeclaredMethod("internalRegister", ResourceKey.class, WritableRegistry.class, registryBootstrapClass);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+        internalRegister.setAccessible(true);
+        try {
+            internalRegister.invoke(null,MUTATION_EFFECT_TYPE_KEY,MUTATION_EFFECT_TYPE_REGISTRY,null);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+        MUTATION_EFFECT_TYPES.register();
     }
 }

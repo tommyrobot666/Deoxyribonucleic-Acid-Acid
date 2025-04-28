@@ -23,7 +23,7 @@ public class TestMutationEffect extends MutationEffect {
     }
 
     public TestMutationEffect(int timeLeft,GameType gameType){
-        super(timeLeft, Dnacid.TEST_MUTATION_EFFECT_TYPE.get());
+        super(timeLeft, Dnacid.TEST_MUTATION_EFFECT_TYPE);
         this.gameType = gameType;
     }
 
