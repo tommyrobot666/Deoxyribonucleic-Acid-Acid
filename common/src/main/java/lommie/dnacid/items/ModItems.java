@@ -4,14 +4,14 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import lommie.dnacid.Dnacid;
 import lommie.dnacid.items.components.ModComponents;
-import lommie.dnacid.mutation.TestMutationEffect;
+import lommie.dnacid.mutation.ModMutations;
+import lommie.dnacid.mutation.MutationEffect;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.GameType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +57,7 @@ public class ModItems {
 
     public static final RegistrySupplier<Item> PLASMID = register("plasmid", Item::new,
             new Item.Properties()
-                    .component(ModComponents.MUTATION_EFFECT_COMPONENT.get(),new TestMutationEffect(100, GameType.SPECTATOR))
+                    .component(ModComponents.MUTATION_EFFECT_COMPONENT.get(),new MutationEffect(ModMutations.TEST_MUTATION_EFFECT_TYPE::get,100))
                     .arch$tab(THE_TAB)
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.tryBuild(MOD_ID,"plasmid")))
 

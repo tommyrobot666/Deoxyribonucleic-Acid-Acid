@@ -57,7 +57,7 @@ public class BacteriaItem extends Item {
                 if (effect.type.get() == null){
                     tooltip.add(Component.literal("❓ Unknown Effect"));
                 } else {
-                    tooltip.add(effect.type.get().name.copy().append(effect.timeLeft < 0 ? "" : "Time Left: " + effect.timeLeft));
+                    tooltip.add(effect.getType().getName().copy().append(effect.timeLeft < 0 ? "" : "Time Left: " + effect.timeLeft));
                 }
             }
         }

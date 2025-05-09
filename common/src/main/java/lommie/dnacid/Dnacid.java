@@ -46,10 +46,10 @@ public final class Dnacid {
         proteinConstructorRecipeDisplayEntries = ls;
     }
 
-    public static final ResourceKey<Registry<MutationEffectType<?>>> MUTATION_EFFECT_TYPE_KEY =
+    public static final ResourceKey<Registry<MutationEffectType>> MUTATION_EFFECT_TYPE_KEY =
             ResourceKey.createRegistryKey(ResourceLocation.tryBuild(MOD_ID, "mutation_effects"));
 
-    public static final DefaultedMappedRegistry<MutationEffectType<?>> MUTATION_EFFECT_TYPE_REGISTRY =
+    public static final DefaultedMappedRegistry<MutationEffectType> MUTATION_EFFECT_TYPE_REGISTRY =
             new DefaultedMappedRegistry<>(MOD_ID+":test", MUTATION_EFFECT_TYPE_KEY, Lifecycle.stable(),false);
 
 

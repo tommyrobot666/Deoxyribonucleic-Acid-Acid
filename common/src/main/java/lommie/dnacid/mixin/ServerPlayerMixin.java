@@ -35,7 +35,7 @@ public abstract class ServerPlayerMixin implements MutationEffectContainer {
     public void tickMutationEffects(CallbackInfo ci) {
         int i = 0;
         while (i < mutationEffects.size()) {
-            if (mutationEffects.get(i).mutationTick(this)) {
+            if (mutationEffects.get(i).getType().mutationTick(mutationEffects.get(i),this)) {
                 mutationEffects.remove(i);
             } else {
                 i++; // Increment index if no removal occurs.

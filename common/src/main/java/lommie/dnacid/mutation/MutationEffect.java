@@ -1,56 +1,65 @@
 package lommie.dnacid.mutation;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lommie.dnacid.Dnacid;
+import net.minecraft.core.component.DataComponentHolder;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.function.Supplier;
 
-public class MutationEffect {
-    public Codec<MutationEffect> codec;
+public class MutationEffect implements DataComponentHolder {
+    public static Codec<MutationEffect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ResourceKey.codec(Dnacid.MUTATION_EFFECT_TYPE_KEY).fieldOf("id").forGetter(e -> e.getType().getId()),
+            Codec.INT.fieldOf("time").forGetter(e -> e.timeLeft),
+            PatchedDataComponentMap.CODEC.fieldOf("components").forGetter(MutationEffect::getComponents))
+            .apply(instance, (y, t, c) -> new MutationEffect(Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.get(y).get()::value,t,((PatchedDataComponentMap) c))));
+    public static StreamCodec<RegistryFriendlyByteBuf, MutationEffect> STREAM_CODEC = StreamCodec.of((b,e) -> e.encode(b),MutationEffect::decode);
     public int timeLeft;
+    PatchedDataComponentMap components;
     @NotNull
-    public Supplier<MutationEffectType<?>> type;
+    public Supplier<MutationEffectType> type;
 
-    public MutationEffect(int timeLeft, @NotNull Supplier<MutationEffectType<?>> type){
+    public MutationEffect(@NotNull Supplier<MutationEffectType> type,int timeLeft,PatchedDataComponentMap components){
         this.timeLeft = timeLeft;
         this.type = type;
+        this.components = components;
     }
 
-    /**
-     * @return returns whether effect should be removed
-     * */
-    public boolean mutationTick(MutationEffectContainer mutationEffectContainer){
-        if (timeLeft == 0){
-            return false;
-        }else if (this.timeLeft > 0) {
-            this.timeLeft--;
-        }
-        switch (mutationEffectContainer.getMutationCreatureType()){
-            case PLAYER -> {
-                ServerPlayer player = (ServerPlayer) mutationEffectContainer;
-                return playerMutationTick(player);
-            }
-            case ENTITY, BLOCK -> {
-                return false;
-            }
-        }
-
-        return false;
+    public MutationEffect(@NotNull Supplier<MutationEffectType> type,int timeLeft){
+        this(type,timeLeft, new PatchedDataComponentMap(DataComponentMap.EMPTY));
     }
 
-    /**
-     * @return returns whether effect should be removed
-     * */
-    boolean playerMutationTick(ServerPlayer player){
-        throw new IllegalStateException("Mutation Effect \""+this+"\" does nothing when applied to a player");
-    };
+    public MutationEffect(@NotNull ResourceLocation location, int timeLeft, PatchedDataComponentMap components){
+        this(Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.get(location).get()::value,timeLeft,components);
+    }
+
+    public MutationEffect(@NotNull ResourceLocation location,int timeLeft){
+        this(Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.get(location).get()::value,timeLeft);
+    }
+
+    public MutationEffect(@NotNull MutationEffectType type){
+        this(type,-1);
+    }
+    public MutationEffect(@NotNull MutationEffectType type, int timeLeft){
+        this(type,timeLeft,new PatchedDataComponentMap(DataComponentMap.EMPTY));
+    }
+
+    public MutationEffect(@NotNull MutationEffectType type, int timeLeft, PatchedDataComponentMap components){
+        this(() -> type,timeLeft,components);
+    }
+
+    public MutationEffectType getType(){
+        return type.get();
+    }
 
     public MutationEffect withTimeLeft(int timeLeft){
         this.timeLeft = timeLeft;
@@ -58,44 +67,44 @@ public class MutationEffect {
     }
 
     public void encode(RegistryFriendlyByteBuf buf) {
-        // Write the type key first
-        buf.writeResourceKey(this.type.get().key());
+        buf.writeResourceKey(this.getType().getId());
         buf.writeInt(this.timeLeft);
-
-        // Look up the correct subclass codec based on the resource key
-        MutationEffectType<?> effectType = Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.getValue(this.type.get().key());
-        if (effectType == null) {
-            throw new IllegalStateException("Unknown MutationEffect type: " + this.type.get().key());
-        }
-
-        // Get the class type of the effect
-        Class<?> effectClass = this.getClass(); // Get the actual class of the effect (e.g., TestMutationEffect)
-
-        try {
-            // Use reflection to get the "streamCodec" method for the specific subclass type
-            Method streamCodecMethod = effectType.getClass().getMethod("streamCodec");
-            StreamCodec<RegistryFriendlyByteBuf, ? extends MutationEffect> effectCodec =
-                    (StreamCodec<RegistryFriendlyByteBuf, ? extends MutationEffect>) streamCodecMethod.invoke(effectType);
-
-            // Use reflection to invoke the "encode" method of the codec
-            Method encodeMethod = Arrays.stream(effectCodec.getClass().getMethods()).filter((m) -> m.getName().equals("encode")).findFirst().get();    //.getMethod("encode", RegistryFriendlyByteBuf.class, effectClass);
-            encodeMethod.invoke(effectCodec, buf, this);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error encoding MutationEffect: " + e.getMessage(), e);
-        }
+        getType().encode(buf);
     }
 
     public static MutationEffect decode(RegistryFriendlyByteBuf buf) {
-        // First read the type
-        ResourceKey<MutationEffectType<?>> type = buf.readResourceKey(Dnacid.MUTATION_EFFECT_TYPE_KEY); // You can lookup your MutationEffectType from the registry
-        MutationEffectType<?> effectType = Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.getValue(type); // We'll write this next
+        ResourceKey<MutationEffectType> id = buf.readResourceKey(Dnacid.MUTATION_EFFECT_TYPE_KEY); // You can lookup your MutationEffectType from the registry
+        MutationEffectType effectType = Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.getValue(id); // We'll write this next
         if (effectType == null){
-            Dnacid.LOGGER.error("Unknown mutation effect type: " + type);
-            effectType = Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.get(0).get().value();
+            Dnacid.LOGGER.error("Unknown mutation effect type: " + id.location());
+            effectType = Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.getValue(Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.getDefaultKey());
         }
         int timeLeft = buf.readInt();
-        // Then decode the data
-        return effectType.streamCodec().decode(buf).withTimeLeft(timeLeft);
+        MutationEffect effect = new MutationEffect(effectType,timeLeft);
+        return effectType.decode(buf,effect);
+    }
+
+    @Override
+    public @NotNull DataComponentMap getComponents() {
+        return components;
+    }
+
+    @Override
+    public @Nullable <T> T get(DataComponentType<? extends T> dataComponentType) {
+        return components.get(dataComponentType);
+    }
+
+    @Override
+    public <T> @NotNull T getOrDefault(DataComponentType<? extends T> dataComponentType, T object) {
+        return components.getOrDefault(dataComponentType,object);
+    }
+
+    @Override
+    public boolean has(DataComponentType<?> dataComponentType) {
+        return components.has(dataComponentType);
+    }
+
+    public <T> void set(DataComponentType<T> dataComponentType, @Nullable T object) {
+        this.components.set(dataComponentType, object);
     }
 }

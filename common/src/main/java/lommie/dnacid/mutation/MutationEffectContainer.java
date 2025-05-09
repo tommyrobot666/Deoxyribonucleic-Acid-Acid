@@ -12,6 +12,7 @@ public interface MutationEffectContainer {
     enum creatureType {
         PLAYER,
         ENTITY,
-        BLOCK
+        PLANT_BLOCK,
+        BACTERIA
     }
 }

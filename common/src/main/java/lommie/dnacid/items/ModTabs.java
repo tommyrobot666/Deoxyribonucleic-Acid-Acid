@@ -35,9 +35,9 @@ public class ModTabs {
                     (b) -> b.title(Component.translatable("category."+MOD_ID))
                             .icon(() -> new ItemStack(ModItems.PLASMID.get()))
                             .displayItems((p, o) -> p.holders().get(Dnacid.MUTATION_EFFECT_TYPE_KEY).ifPresent((r) -> {
-                                for (Map.Entry<ResourceKey<MutationEffectType<?>>, MutationEffectType<?>> mutationEffectTypeEntry : r.value().entrySet()){
+                                for (Map.Entry<ResourceKey<MutationEffectType>, MutationEffectType> mutationEffectTypeEntry : r.value().entrySet()){
                                     ItemStack stack = new ItemStack(ModItems.PLASMID.get());
-                                    stack.set(ModComponents.MUTATION_EFFECT_COMPONENT.get(),mutationEffectTypeEntry.getValue().defaultMutationEffect.get());
+                                    stack.set(ModComponents.MUTATION_EFFECT_COMPONENT.get(),mutationEffectTypeEntry.getValue().defaultEffect());
                                     o.accept(stack);
                                 }})).build()
             )
