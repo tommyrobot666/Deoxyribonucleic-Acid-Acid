@@ -2,6 +2,8 @@ package lommie.dnacid.recipe;
 
 import com.google.common.collect.ImmutableMap;
 import lommie.dnacid.Dnacid;
+import lommie.dnacid.items.ModItems;
+import lommie.dnacid.items.components.ModComponents;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
@@ -15,7 +17,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ProteinConstructorRecipe implements Recipe<RecipeInput> {
     final ResourceLocation id;
@@ -26,7 +27,7 @@ public class ProteinConstructorRecipe implements Recipe<RecipeInput> {
     private static Map<Character, Ingredient> generateKeyMapping() {
         HashMap<Character,Ingredient> map = new HashMap<>(Dnacid.AMINO_ACID_CHARS.size());
         for (int i = 0; i < Dnacid.AMINO_ACID_CHARS.size(); i++) {
-            map.put(Dnacid.AMINO_ACID_CHARS.get(i), Ingredient.of(Dnacid.AMINO_ACIDS.get(i).get()));
+            map.put(Dnacid.AMINO_ACID_CHARS.get(i), Ingredient.of(ModItems.AMINO_ACIDS.get(i).get()));
         }
         return ImmutableMap.copyOf(map);
     }
@@ -75,7 +76,7 @@ public class ProteinConstructorRecipe implements Recipe<RecipeInput> {
 
     @Override
     public @NotNull RecipeBookCategory recipeBookCategory() {
-        return Dnacid.PROTEIN_CONSTRUCTOR_RECIPE_CATEGORY.get();
+        return ModRecipes.PROTEIN_CONSTRUCTOR_RECIPE_CATEGORY.get();
     }
 
     public ShapedRecipe toShapedRecipe() {
@@ -95,9 +96,9 @@ public class ProteinConstructorRecipe implements Recipe<RecipeInput> {
         // Use the built-in factory method to create a ShapedRecipePattern.
         ShapedRecipePattern shapedPattern = new ShapedRecipePattern(5,40,thatList(generateKeyMapping(),paddedPatternString),Optional.of(new ShapedRecipePattern.Data(generateKeyMapping(),rows)));
         // Create and return a new ShapedRecipe.
-        ItemStack out = new ItemStack(Dnacid.PROTEIN.get());
+        ItemStack out = new ItemStack(ModItems.PROTEIN.get());
         out.applyComponents(DataComponentPatch.builder()
-                .set(Dnacid.AMINO_ACIDS_COMPONENT.get(),patternString)
+                .set(ModComponents.AMINO_ACIDS_COMPONENT.get(),patternString)
                 .set(DataComponents.ITEM_NAME, Component.literal(this.output))
                 .set(DataComponents.RARITY, Rarity.UNCOMMON).build());
 
@@ -112,7 +113,7 @@ public class ProteinConstructorRecipe implements Recipe<RecipeInput> {
                 char c = pattern.charAt(q);
                 Ingredient ingredient = (Ingredient) key.get(c);
                 if (ingredient == null){
-                    ingredient = Ingredient.of(Dnacid.AMINO_ACIDS.get(0).get());
+                    ingredient = Ingredient.of(ModItems.AMINO_ACIDS.get(0).get());
                 }
                 list.add(Optional.of(ingredient));
             } else {

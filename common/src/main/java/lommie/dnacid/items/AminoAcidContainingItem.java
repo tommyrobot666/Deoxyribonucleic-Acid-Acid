@@ -1,6 +1,6 @@
 package lommie.dnacid.items;
 
-import lommie.dnacid.Dnacid;
+import lommie.dnacid.items.components.ModComponents;
 import lommie.dnacid.mutation.MutationEffectContainer;
 import lommie.dnacid.mutation.TestMutationEffect;
 import net.minecraft.ChatFormatting;
@@ -26,7 +26,7 @@ public class AminoAcidContainingItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> text, TooltipFlag tooltipFlag) {
-        text.add(MutableComponent.create(PlainTextContents.create(itemStack.getOrDefault(Dnacid.AMINO_ACIDS_COMPONENT.get(),"[error]"))).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)));
+        text.add(MutableComponent.create(PlainTextContents.create(itemStack.getOrDefault(ModComponents.AMINO_ACIDS_COMPONENT.get(),"[error]"))).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)));
 
         if (tooltipFlag.isAdvanced()){
             text.add(MutableComponent.create(PlainTextContents.create("Advanced Tooltips Is On Right Now")).withStyle(ChatFormatting.UNDERLINE));

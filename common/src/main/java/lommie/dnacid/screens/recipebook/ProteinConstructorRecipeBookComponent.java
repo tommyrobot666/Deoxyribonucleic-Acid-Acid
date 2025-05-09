@@ -1,10 +1,10 @@
 package lommie.dnacid.screens.recipebook;
 
 import com.google.common.collect.Lists;
-import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
 import lommie.dnacid.Dnacid;
+import lommie.dnacid.items.ModItems;
 import lommie.dnacid.notmixin.ILocalPlayerMixin;
+import lommie.dnacid.recipe.ModRecipes;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
@@ -20,7 +20,6 @@ import net.minecraft.client.gui.navigation.ScreenAxis;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.recipebook.*;
-import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.LanguageInfo;
 import net.minecraft.client.resources.language.LanguageManager;
@@ -81,7 +80,7 @@ public class ProteinConstructorRecipeBookComponent<T extends RecipeBookMenu> imp
     public ProteinConstructorRecipeBookComponent(T recipeBookMenu) {
         this.menu = recipeBookMenu;
         this.tabInfos = List.of(
-                new RecipeBookComponent.TabInfo(Dnacid.SOAP.get(), Dnacid.PROTEIN_CONSTRUCTOR_RECIPE_CATEGORY.get())
+                new RecipeBookComponent.TabInfo(ModItems.SOAP.get(), ModRecipes.PROTEIN_CONSTRUCTOR_RECIPE_CATEGORY.get())
         );
         SlotSelectTime slotSelectTime = () -> Mth.floor(this.time / 30.0F);
         this.ghostSlots = new GhostSlots(slotSelectTime);

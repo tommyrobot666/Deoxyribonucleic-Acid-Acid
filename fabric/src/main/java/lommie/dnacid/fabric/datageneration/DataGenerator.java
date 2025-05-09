@@ -1,6 +1,7 @@
 package lommie.dnacid.fabric.datageneration;
 
-import lommie.dnacid.Dnacid;
+import lommie.dnacid.blocks.ModBlocks;
+import lommie.dnacid.items.ModItems;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -24,12 +25,12 @@ public class DataGenerator implements DataGeneratorEntrypoint {
 
         @Override
         public void generateBlockStateModels(BlockModelGenerators g) {
-            g.createTrivialCube(Dnacid.PROTEIN_CONSTRUCTOR.get());
+            g.createTrivialCube(ModBlocks.PROTEIN_CONSTRUCTOR.get());
         }
 
         @Override
         public void generateItemModels(ItemModelGenerators g) {
-            g.createFlatItemModel(Dnacid.SOAP.get(), ModelTemplates.FLAT_ITEM);
+            g.createFlatItemModel(ModItems.SOAP.get(), ModelTemplates.FLAT_ITEM);
         }
     }
 }

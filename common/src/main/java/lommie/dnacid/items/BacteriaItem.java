@@ -1,7 +1,7 @@
 package lommie.dnacid.items;
 
-import lommie.dnacid.Dnacid;
 import lommie.dnacid.items.components.BacteriaData;
+import lommie.dnacid.items.components.ModComponents;
 import lommie.dnacid.mutation.MutationEffect;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -19,20 +19,20 @@ import java.util.Objects;
 
 public class BacteriaItem extends Item {
     public BacteriaItem(Properties properties) {
-        super(properties.component(Dnacid.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(false,List.of())));
+        super(properties.component(ModComponents.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(false,List.of())));
     }
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack bac, ItemStack other, Slot slot, ClickAction clickAction, Player player, SlotAccess slotAccess) {
-        BacteriaData data = Objects.requireNonNull(bac.getComponents().get(Dnacid.BACTERIA_DATA_COMPONENT.get()));
+        BacteriaData data = Objects.requireNonNull(bac.getComponents().get(ModComponents.BACTERIA_DATA_COMPONENT.get()));
         if (other.getItem().toString().equals("dnacid:petri_dish") && !data.petriDish()){
-            bac.set(Dnacid.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(true,data.effects()));
+            bac.set(ModComponents.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(true,data.effects()));
             other.shrink(1);
             return true;
-        } else if (other.has(Dnacid.MUTATION_EFFECT_COMPONENT.get())) {
+        } else if (other.has(ModComponents.MUTATION_EFFECT_COMPONENT.get())) {
             List<MutationEffect> effects = new ArrayList<>(data.effects());
-            effects.add(other.get(Dnacid.MUTATION_EFFECT_COMPONENT.get()));
-            bac.set(Dnacid.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(data.petriDish(),effects));
+            effects.add(other.get(ModComponents.MUTATION_EFFECT_COMPONENT.get()));
+            bac.set(ModComponents.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(data.petriDish(),effects));
             other.shrink(1);
             return true;
         }
@@ -49,7 +49,7 @@ public class BacteriaItem extends Item {
             return;
         }
 
-        BacteriaData data = bac.getComponents().get(Dnacid.BACTERIA_DATA_COMPONENT.get());
+        BacteriaData data = bac.getComponents().get(ModComponents.BACTERIA_DATA_COMPONENT.get());
         tooltip.add(Component.literal("In petri dish: " + (data.petriDish()?"Yes":"No")).withStyle(data.petriDish()?ChatFormatting.GREEN:ChatFormatting.RED));
         if (data.effects().size() > 0){
             tooltip.add(Component.literal("Effects:"));

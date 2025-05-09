@@ -1,6 +1,5 @@
 package lommie.dnacid.mutation;
 
-import lommie.dnacid.Dnacid;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,7 +22,7 @@ public class TestMutationEffect extends MutationEffect {
     }
 
     public TestMutationEffect(int timeLeft,GameType gameType){
-        super(timeLeft, Dnacid.TEST_MUTATION_EFFECT_TYPE);
+        super(timeLeft, ModMutations.TEST_MUTATION_EFFECT_TYPE);
         this.gameType = gameType;
     }
 

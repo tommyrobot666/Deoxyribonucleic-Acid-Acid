@@ -36,7 +36,7 @@ public class ProteinConstructorMenu extends AbstractCraftingMenu implements Menu
     }
 
     public ProteinConstructorMenu(int containerId, Inventory playerInventory, Container container) {
-        super(Dnacid.PROTEIN_CONSTRUCTOR_MENU.get(), containerId,40,5);
+        super(ModMenus.PROTEIN_CONSTRUCTOR_MENU.get(), containerId,40,5);
         this.player = playerInventory.player;
         this.container = container;
 

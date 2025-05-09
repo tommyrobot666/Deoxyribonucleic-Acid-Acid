@@ -1,6 +1,6 @@
 package lommie.dnacid.blocks;
 
-import lommie.dnacid.Dnacid;
+import lommie.dnacid.recipe.ModRecipes;
 import lommie.dnacid.recipe.ProteinConstructorRecipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -25,7 +25,7 @@ public class ProteinConstructorBlockEntity extends BlockEntity implements Recipe
     private final SimpleContainer container = new SimpleContainer(201); // 200 input slots + 1 output slot
 
     public ProteinConstructorBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(Dnacid.PROTEIN_CONSTRUCTOR_ENTITY.get(), blockPos, blockState);
+        super(ModBlocks.PROTEIN_CONSTRUCTOR_ENTITY.get(), blockPos, blockState);
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, ProteinConstructorBlockEntity te) {
@@ -41,7 +41,7 @@ public class ProteinConstructorBlockEntity extends BlockEntity implements Recipe
 
         // Query the recipe manager for a matching recipe of our custom type.
         Optional<RecipeHolder<ProteinConstructorRecipe>> recipeHolderOpt =
-                ((ServerLevel) level).recipeAccess().getRecipeFor(Dnacid.PROTEIN_CONSTRUCTOR_RECIPE_TYPE.get(), input, level);
+                ((ServerLevel) level).recipeAccess().getRecipeFor(ModRecipes.PROTEIN_CONSTRUCTOR_RECIPE_TYPE.get(), input, level);
 
         if (recipeHolderOpt.isPresent()) {
             RecipeHolder<ProteinConstructorRecipe> recipeHolder = recipeHolderOpt.get();

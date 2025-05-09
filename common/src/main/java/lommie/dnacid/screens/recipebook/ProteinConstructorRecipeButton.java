@@ -1,6 +1,7 @@
 package lommie.dnacid.screens.recipebook;
 
 import lommie.dnacid.Dnacid;
+import lommie.dnacid.items.ModItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.ClientRecipeBook;
@@ -142,7 +143,7 @@ public class ProteinConstructorRecipeButton extends RecipeButton {
         int j = this.selectedEntries.size();
         if (j == 0){
             Dnacid.LOGGER.error("getDisplayStack failed because this.selectedEntries.size() == 0");
-            return new ItemStack(Dnacid.PROTEIN.get());
+            return new ItemStack(ModItems.PROTEIN.get());
         }
         int k = i / j;
         int l = i - j * k;

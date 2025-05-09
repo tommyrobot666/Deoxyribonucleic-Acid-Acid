@@ -1,6 +1,6 @@
 package lommie.dnacid.neoforge;
 
-import lommie.dnacid.Dnacid;
+import lommie.dnacid.screens.ModMenus;
 import lommie.dnacid.screens.ProteinConstructorScreen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -11,6 +11,6 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 public class ClientEvents {
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(Dnacid.PROTEIN_CONSTRUCTOR_MENU.get(), ProteinConstructorScreen::new);
+        event.register(ModMenus.PROTEIN_CONSTRUCTOR_MENU.get(), ProteinConstructorScreen::new);
     }
 }

@@ -3,7 +3,6 @@ package lommie.dnacid.blocks;
 import com.mojang.serialization.MapCodec;
 import dev.architectury.registry.menu.ExtendedMenuProvider;
 import dev.architectury.registry.menu.MenuRegistry;
-import lommie.dnacid.Dnacid;
 import lommie.dnacid.screens.ProteinConstructorMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -80,14 +79,14 @@ public class ProteinConstructorBlock extends BaseEntityBlock {
     @Override
     protected void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
         Containers.dropContents(level,blockPos,((ProteinConstructorBlockEntity) Objects.requireNonNull(level.getBlockEntity(blockPos))).getContainer());
-        level.addFreshEntity(new ItemEntity(level,blockPos.getX(),blockPos.getY(),blockPos.getZ(),new ItemStack(Dnacid.PROTEIN_CONSTRUCTOR_ITEM.get())));
+        level.addFreshEntity(new ItemEntity(level,blockPos.getX(),blockPos.getY(),blockPos.getZ(),new ItemStack(ModBlocks.PROTEIN_CONSTRUCTOR.get().asItem())));
         super.onRemove(blockState, level, blockPos, blockState2, bl);
     }
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
         // Use a proper ticker that calls tick() on the block entity on the server side.
-        return level.isClientSide ? null : createTickerHelper(blockEntityType, Dnacid.PROTEIN_CONSTRUCTOR_ENTITY.get(), (lvl, pos, state, te) -> {
+        return level.isClientSide ? null : createTickerHelper(blockEntityType, ModBlocks.PROTEIN_CONSTRUCTOR_ENTITY.get(), (lvl, pos, state, te) -> {
             ProteinConstructorBlockEntity.tick(lvl, pos, state, te);
         });
     }
