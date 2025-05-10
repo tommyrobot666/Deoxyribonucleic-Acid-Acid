@@ -8,6 +8,7 @@
     "RecipeButtonAccessor"
   ],
   "mixins": [
+    "ItemStackMixin",
     "RecipeDisplayMixin",
     "RecipeManagerAccessor",
     "RegistriesAccessor",

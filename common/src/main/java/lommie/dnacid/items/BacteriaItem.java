@@ -1,10 +1,16 @@
 package lommie.dnacid.items;
 
+import dev.architectury.registry.registries.RegistrySupplier;
 import lommie.dnacid.items.components.BacteriaData;
 import lommie.dnacid.items.components.ModComponents;
 import lommie.dnacid.mutation.MutationEffect;
+import lommie.dnacid.mutation.MutationEffectContainer;
+import lommie.dnacid.mutation.MutationEffectType;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
@@ -12,6 +18,10 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.level.Level;
+import org.apache.commons.lang3.tuple.Pair;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +51,20 @@ public class BacteriaItem extends Item {
     }
 
     @Override
+    public void inventoryTick(ItemStack bac, Level level, Entity entity, int i, boolean bl) {
+        BacteriaData data = Objects.requireNonNull(bac.getComponents().get(ModComponents.BACTERIA_DATA_COMPONENT.get()));
+        ArrayList<MutationEffect> effects = new ArrayList<>(data.effects());
+        int j = 0;
+        while (j < effects.size()) {
+            if (effects.get(j).getType().mutationTick(effects.get(j),(MutationEffectContainer) ((Object) bac))) {
+                effects.remove(j);
+            } else {
+                j++;
+            }
+        }
+    }
+
+    @Override
     public void appendHoverText(ItemStack bac, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         if (type.isAdvanced() && ((Player) bac.getEntityRepresentation()).isCreative()){
             tooltip.add(Component.literal("Creative mode AND advanced tooltips?!"));
@@ -59,6 +83,12 @@ public class BacteriaItem extends Item {
                 } else {
                     tooltip.add(effect.getType().getName().copy().append(effect.timeLeft < 0 ? "" : "Time Left: " + effect.timeLeft));
                 }
+            }
+        }
+
+        for (RegistrySupplier<DataComponentType<Pair<Integer, Holder<Potion>>>> component : ModComponents.POTION_COMPONENTS.values()){
+            if (bac.has(component.get())){
+                tooltip.add(Component.literal(bac.get(component.get()).getRight().value().name()+"<"+bac.get(component.get()).getLeft()));
             }
         }
     }
