@@ -20,25 +20,25 @@ public class MutationEffect implements DataComponentHolder {
     public static Codec<MutationEffect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceKey.codec(Dnacid.MUTATION_EFFECT_TYPE_KEY).fieldOf("id").forGetter(e -> e.getType().getId()),
             Codec.INT.fieldOf("time").forGetter(e -> e.timeLeft),
-            PatchedDataComponentMap.CODEC.fieldOf("components").forGetter(MutationEffect::getComponents))
-            .apply(instance, (y, t, c) -> new MutationEffect(Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.get(y).get()::value,t,((PatchedDataComponentMap) c))));
+            DataComponentMap.CODEC.fieldOf("components").forGetter(MutationEffect::getComponents))
+            .apply(instance, (y, t, c) -> new MutationEffect(Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.get(y).get()::value,t,(c))));
     public static StreamCodec<RegistryFriendlyByteBuf, MutationEffect> STREAM_CODEC = StreamCodec.of((b,e) -> e.encode(b),MutationEffect::decode);
     public int timeLeft;
     PatchedDataComponentMap components;
     @NotNull
     public Supplier<MutationEffectType> type;
 
-    public MutationEffect(@NotNull Supplier<MutationEffectType> type,int timeLeft,PatchedDataComponentMap components){
+    public MutationEffect(@NotNull Supplier<MutationEffectType> type,int timeLeft,DataComponentMap components){
         this.timeLeft = timeLeft;
         this.type = type;
-        this.components = components;
+        this.components = new PatchedDataComponentMap(components);
     }
 
     public MutationEffect(@NotNull Supplier<MutationEffectType> type,int timeLeft){
-        this(type,timeLeft, new PatchedDataComponentMap(DataComponentMap.EMPTY));
+        this(type,timeLeft, DataComponentMap.EMPTY);
     }
 
-    public MutationEffect(@NotNull ResourceLocation location, int timeLeft, PatchedDataComponentMap components){
+    public MutationEffect(@NotNull ResourceLocation location, int timeLeft, DataComponentMap components){
         this(Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.get(location).get()::value,timeLeft,components);
     }
 
@@ -50,10 +50,10 @@ public class MutationEffect implements DataComponentHolder {
         this(type,-1);
     }
     public MutationEffect(@NotNull MutationEffectType type, int timeLeft){
-        this(type,timeLeft,new PatchedDataComponentMap(DataComponentMap.EMPTY));
+        this(type,timeLeft,DataComponentMap.EMPTY);
     }
 
-    public MutationEffect(@NotNull MutationEffectType type, int timeLeft, PatchedDataComponentMap components){
+    public MutationEffect(@NotNull MutationEffectType type, int timeLeft, DataComponentMap components){
         this(() -> type,timeLeft,components);
     }
 

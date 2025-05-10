@@ -1,7 +1,11 @@
 package lommie.dnacid.mixin;
 
+import com.mojang.serialization.Dynamic;
 import lommie.dnacid.mutation.MutationEffectContainer;
 import lommie.dnacid.mutation.MutationEffect;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -41,5 +45,26 @@ public abstract class ServerPlayerMixin implements MutationEffectContainer {
                 i++; // Increment index if no removal occurs.
             }
         }
+    }
+
+    @Inject(method = "restoreFrom", at = @At("TAIL"))
+    public void restoreMutationEffects(ServerPlayer player, boolean bl, CallbackInfo ci){
+        this.mutationEffects = ((MutationEffectContainer) player).getMutationEffects();
+    }
+
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
+    public void load(CompoundTag compoundTag, CallbackInfo ci){
+        if (compoundTag.contains("mutationEffects")){
+            var result = MutationEffect.CODEC.listOf().parse(new Dynamic<>(NbtOps.INSTANCE, compoundTag.get("mutationEffects")));
+            result.result().ifPresent(list -> this.mutationEffects = new ArrayList<>(list));
+        }
+    }
+
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
+    public void save(CompoundTag compoundTag, CallbackInfo ci){
+        MutationEffect.CODEC.listOf()
+                .encodeStart(NbtOps.INSTANCE,this.mutationEffects)
+                .result()
+                .ifPresent(t -> compoundTag.put("mutationEffects", t));
     }
 }
