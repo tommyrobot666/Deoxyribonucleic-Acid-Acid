@@ -30,7 +30,7 @@ public class DataGenerator implements DataGeneratorEntrypoint {
 
         @Override
         public void generateItemModels(ItemModelGenerators g) {
-            g.createFlatItemModel(ModItems.SOAP.get(), ModelTemplates.FLAT_ITEM);
+            g.generateFlatItem(ModItems.PETRI_DISH.get(), ModelTemplates.FLAT_ITEM);
         }
     }
 }
