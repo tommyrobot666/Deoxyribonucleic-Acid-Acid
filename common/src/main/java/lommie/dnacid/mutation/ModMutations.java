@@ -40,7 +40,9 @@ public class ModMutations {
         for(Potion potion : ModComponents.POTION_COMPONENTS.keySet()){
             out.put(potion,register(potion.name(),
                     (s) -> new PotionMutationEffectType(s, potion),
-                    new MutationEffectType.Settings()));
+                    new MutationEffectType.Settings()
+                            .defaultEffect(() -> new MutationEffect(Objects.requireNonNull(ResourceLocation.tryBuild(MOD_ID, potion.name())),100))
+                            .name(potion.name())));
         }
         return out;
     }

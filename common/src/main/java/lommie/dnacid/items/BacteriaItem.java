@@ -5,9 +5,7 @@ import lommie.dnacid.items.components.BacteriaData;
 import lommie.dnacid.items.components.ModComponents;
 import lommie.dnacid.mutation.MutationEffect;
 import lommie.dnacid.mutation.MutationEffectContainer;
-import lommie.dnacid.mutation.MutationEffectType;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -20,8 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.Level;
-import org.apache.commons.lang3.tuple.Pair;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,14 +77,15 @@ public class BacteriaItem extends Item {
                 if (effect.type.get() == null){
                     tooltip.add(Component.literal("❓ Unknown Effect"));
                 } else {
-                    tooltip.add(effect.getType().getName().copy().append(effect.timeLeft < 0 ? "" : "Time Left: " + effect.timeLeft));
+                    tooltip.add(effect.getType().getName().copy().append(effect.timeLeft < 0 ? "" : " Time Left: " + effect.timeLeft));
                 }
             }
         }
 
-        for (RegistrySupplier<DataComponentType<Pair<Integer, Holder<Potion>>>> component : ModComponents.POTION_COMPONENTS.values()){
+        for (Potion potion : ModComponents.POTION_COMPONENTS.keySet()){
+            RegistrySupplier<DataComponentType<Integer>> component = ModComponents.POTION_COMPONENTS.get(potion);
             if (bac.has(component.get())){
-                tooltip.add(Component.literal(bac.get(component.get()).getRight().value().name()+"<"+bac.get(component.get()).getLeft()));
+                tooltip.add(Component.literal(potion.name()+"<"+bac.get(component.get())));
             }
         }
     }

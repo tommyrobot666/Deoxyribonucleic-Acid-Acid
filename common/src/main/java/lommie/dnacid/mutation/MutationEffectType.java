@@ -1,7 +1,5 @@
 package lommie.dnacid.mutation;
 
-import lommie.dnacid.items.BacteriaItem;
-import lommie.dnacid.mixin.ItemStackMixin;
 import lommie.dnacid.recipe.ProteinConstructorRecipe;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -11,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -30,7 +29,7 @@ public class MutationEffectType {
      * */
     public boolean mutationTick(MutationEffect effect, MutationEffectContainer mutationEffectContainer){
         if (effect.timeLeft == 0){
-            return false;
+            return true;
         }else if (effect.timeLeft > 0) {
             effect.timeLeft--;
         }
@@ -100,7 +99,7 @@ public class MutationEffectType {
         return settings.name;
     }
 
-    public MutationEffect defaultEffect(){
+    public @NotNull MutationEffect defaultEffect(){
         return settings.defaultEffect.get();
     }
 

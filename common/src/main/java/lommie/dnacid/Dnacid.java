@@ -55,11 +55,11 @@ public final class Dnacid {
 
     public static void init() {
         registerMutationEffectTypeRegistry();
-        ModTabs.register();
         ModComponents.register();
         ModItems.register();
         ModBlocks.register();
         ModMutations.register();
+        ModTabs.register();
         ModRecipes.register();
         ModMenus.register();
 

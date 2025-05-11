@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static lommie.dnacid.Dnacid.MOD_ID;
-import static lommie.dnacid.items.ModTabs.THE_TAB;
+import static lommie.dnacid.items.ModTabs.*;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
@@ -55,10 +55,10 @@ public class ModItems {
 
     );
 
-    public static final RegistrySupplier<Item> PLASMID = register("plasmid", Item::new,
+    public static final RegistrySupplier<Item> PLASMID = register("plasmid", PlasmidItem::new,
             new Item.Properties()
                     .component(ModComponents.MUTATION_EFFECT_COMPONENT.get(),new MutationEffect(ModMutations.TEST_MUTATION_EFFECT_TYPE::get,100))
-                    .arch$tab(THE_TAB)
+                    .arch$tab(PLASMIDS_TAB)
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.tryBuild(MOD_ID,"plasmid")))
 
     );
@@ -82,7 +82,7 @@ public class ModItems {
                     register("amino_acid_"+String.valueOf(c).toLowerCase(),Item::new,
                             new Item.Properties()
                                     .food(new FoodProperties(0,0.5f,false))
-                                    .arch$tab(THE_TAB)
+                                    .arch$tab(AMINO_ACIDS_TAB)
                                     .component(DataComponents.RARITY, Rarity.EPIC)
                                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.tryBuild(MOD_ID,"amino_acid_"+String.valueOf(c).toLowerCase())))
                             )

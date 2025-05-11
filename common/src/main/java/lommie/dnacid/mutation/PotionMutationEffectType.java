@@ -1,15 +1,12 @@
 package lommie.dnacid.mutation;
 
 import lommie.dnacid.items.components.ModComponents;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 
 public class PotionMutationEffectType extends MutationEffectType{
@@ -35,9 +32,11 @@ public class PotionMutationEffectType extends MutationEffectType{
 
     @Override
     boolean bacteriaMutationTick(MutationEffect effect, ItemStack bacteria) {
-        DataComponentType<Pair<Integer, Holder<Potion>>> component = ModComponents.POTION_COMPONENTS.get(potion).get();
+        DataComponentType<Integer> component = ModComponents.POTION_COMPONENTS.get(potion).get();
         if (bacteria.has(component)){
-            bacteria.set(component, new ImmutablePair<>(bacteria.get(component).getLeft()+1,bacteria.get(component).getRight()));
+            bacteria.set(component, bacteria.get(component)+1);
+        } else {
+            bacteria.set(component,1);
         }
         return false;
     }
