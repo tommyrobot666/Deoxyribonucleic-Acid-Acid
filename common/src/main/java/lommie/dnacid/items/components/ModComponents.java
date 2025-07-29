@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import lommie.dnacid.mutation.MutationEffect;
+import lommie.dnacid.protein.Protein;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -84,6 +85,12 @@ public class ModComponents {
             "game_mode",
             Codec.INT,
             ByteBufCodecs.INT
+    );
+
+    public static final RegistrySupplier<DataComponentType<Protein>> PROTEIN = register(
+            "protein",
+            null,
+            Protein.STREAM_CODEC
     );
 
     public static Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> EFFECT_AMOUNT_COMPONENTS;

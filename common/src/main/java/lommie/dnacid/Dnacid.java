@@ -24,9 +24,9 @@ public final class Dnacid {
     public static void init() {
         ModRegistries.register();
         ModComponents.register();
+        ModMutations.register();
         ModItems.register();
         ModBlocks.register();
-        ModMutations.register();
         ModTabs.register();
         ModMenus.register();
     }

@@ -6,10 +6,12 @@ import lommie.dnacid.Dnacid;
 import lommie.dnacid.items.components.ModComponents;
 import lommie.dnacid.mutation.ModMutations;
 import lommie.dnacid.mutation.MutationEffect;
+import lommie.dnacid.protein.Protein;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 
@@ -63,7 +65,7 @@ public class ModItems {
 
     );
 
-    public static final RegistrySupplier<Item> PROTEIN = register("protein", AminoAcidContainingItem::new,
+    public static final RegistrySupplier<Item> PROTEIN = register("protein", (s) -> new ProteinItem(s,new Protein(List.of(ModMutations.POTION_MUTATION_EFFECT_TYPES.get(MobEffects.ABSORPTION.value()).get().defaultEffect().get()),"MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYH")),
             new Item.Properties()
                     .food(new FoodProperties(1,0.2f,false))
                     .arch$tab(THE_TAB)
