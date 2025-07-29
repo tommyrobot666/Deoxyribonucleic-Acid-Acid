@@ -41,31 +41,6 @@ public class ModBlocks {
         return register(name,factory,settings,false,null);
     }
 
-    public static final RegistrySupplier<Block> PROTEIN_CONSTRUCTOR = register(
-            "protein_constructor", ProteinConstructorBlock::new,
-                    BlockBehaviour.Properties.of()
-                    .destroyTime(0.1f)
-                    .mapColor(MapColor.TERRACOTTA_GRAY)
-                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.tryBuild(MOD_ID,"protein_constructor"))
-                    ),true,
-            new Item.Properties()
-                    .arch$tab(THE_TAB));
-
-    public static final RegistrySupplier<BlockEntityType<ProteinConstructorBlockEntity>> PROTEIN_CONSTRUCTOR_ENTITY = BLOCKS_ENTITY_TYPES.register( ResourceLocation.tryBuild(MOD_ID,"protein_constructor"),
-            () -> {
-                Constructor<BlockEntityType> constructor;
-                BlockEntityType<ProteinConstructorBlockEntity> type;
-                try {
-                    constructor = BlockEntityType.class.getDeclaredConstructor(BlockEntityType.BlockEntitySupplier.class, Set.class);
-                    constructor.setAccessible(true);
-                    type = constructor.newInstance((BlockEntityType.BlockEntitySupplier<BlockEntity>) ProteinConstructorBlockEntity::new, Set.of(PROTEIN_CONSTRUCTOR.get()));
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-
-                return type;
-            });
-
     public static void register(){
         BLOCKS.register();
         BLOCKS_ENTITY_TYPES.register();

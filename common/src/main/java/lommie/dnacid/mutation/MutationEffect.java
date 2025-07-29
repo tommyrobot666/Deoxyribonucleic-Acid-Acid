@@ -57,6 +57,7 @@ public class MutationEffect implements DataComponentHolder {
         this(() -> type,timeLeft,components);
     }
 
+    @NotNull
     public MutationEffectType getType(){
         return type.get();
     }

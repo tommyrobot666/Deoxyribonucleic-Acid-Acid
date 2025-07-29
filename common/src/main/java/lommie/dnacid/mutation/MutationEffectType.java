@@ -1,6 +1,5 @@
 package lommie.dnacid.mutation;
 
-import lommie.dnacid.recipe.ProteinConstructorRecipe;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
@@ -9,9 +8,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class MutationEffectType {
@@ -99,30 +98,20 @@ public class MutationEffectType {
         return settings.name;
     }
 
-    public @NotNull MutationEffect defaultEffect(){
+    public Optional<MutationEffect> defaultEffect(){
         return settings.defaultEffect.get();
     }
 
     public static class Settings{
         StreamCodec<RegistryFriendlyByteBuf, MutationEffect> codec;
-        public Supplier<MutationEffect> defaultEffect;
-        @Nullable
-        String aminoAcids;
-        @Nullable
-        ProteinConstructorRecipe generatedRecipe;
+        public Supplier<Optional<MutationEffect>> defaultEffect;
         public Component name;
         @Nullable
         private ResourceKey<MutationEffectType> id;
 
-        private void generateProteinConstructorRecipe() {
-            assert id != null;
-            generatedRecipe = new ProteinConstructorRecipe(id.location(), id.location().getPath(), aminoAcids, id.location().getPath());
-        }
-
-
         public Settings() {}
 
-        public Settings defaultEffect(Supplier<MutationEffect> defaultEffect) {
+        public Settings defaultEffect(Supplier<Optional<MutationEffect>> defaultEffect) {
             this.defaultEffect = defaultEffect;
             return this;
         }
@@ -132,15 +121,6 @@ public class MutationEffectType {
             return this;
         }
 
-        public Settings aminoAcids(String aminoAcids, boolean recipe) {
-            this.aminoAcids = aminoAcids;
-            if (recipe) {generateProteinConstructorRecipe();}
-            return this;
-        }
-
-        public Settings aminoAcids(String aminoAcids) {
-            return aminoAcids(aminoAcids,false);
-        }
 
         public Settings name(Component name){
             this.name = name;

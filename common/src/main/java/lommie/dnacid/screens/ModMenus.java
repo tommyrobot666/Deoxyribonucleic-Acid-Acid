@@ -12,8 +12,6 @@ public class ModMenus {
     public static final DeferredRegister<MenuType<?>> MENUS =
             DeferredRegister.create(MOD_ID, Registries.MENU);
 
-    public static final RegistrySupplier<MenuType<ProteinConstructorMenu>> PROTEIN_CONSTRUCTOR_MENU = MENUS.register("protein_constructor", () -> MenuRegistry.ofExtended(ProteinConstructorMenu::new));
-
     public static void register(){
         MENUS.register();
     }

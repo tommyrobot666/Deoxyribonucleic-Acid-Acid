@@ -26,6 +26,11 @@ public abstract class ServerPlayerMixin implements MutationEffectContainer {
     }
 
     @Override
+    public void removeMutationEffectAt(int i){
+        mutationEffects.remove(i);
+    }
+
+    @Override
     public ArrayList<MutationEffect> getMutationEffects() {
         return mutationEffects;
     }

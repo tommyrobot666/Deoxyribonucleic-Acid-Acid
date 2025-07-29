@@ -30,7 +30,7 @@ public class ModMutations {
             (s) -> new TestMutationEffectType(s,GameType.SPECTATOR),
             new MutationEffectType.Settings()
                     .name("Test")
-                    .defaultEffect(() -> new MutationEffect(Objects.requireNonNull(ResourceLocation.tryBuild(MOD_ID, "test")),-1))
+                    .defaultEffect(() -> java.util.Optional.of(new MutationEffect(Objects.requireNonNull(ResourceLocation.tryBuild(MOD_ID, "test")), -1)))
     );
 
     public static Map<Potion, RegistrySupplier<MutationEffectType>> POTION_MUTATION_EFFECT_TYPES;
@@ -41,7 +41,7 @@ public class ModMutations {
             out.put(potion,register(potion.name(),
                     (s) -> new PotionMutationEffectType(s, potion),
                     new MutationEffectType.Settings()
-                            .defaultEffect(() -> new MutationEffect(Objects.requireNonNull(ResourceLocation.tryBuild(MOD_ID, potion.name())),100))
+                            .defaultEffect(() -> java.util.Optional.of(new MutationEffect(Objects.requireNonNull(ResourceLocation.tryBuild(MOD_ID, potion.name())), 100)))
                             .name(potion.name())));
         }
         return out;

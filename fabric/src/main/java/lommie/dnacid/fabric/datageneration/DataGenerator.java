@@ -25,7 +25,7 @@ public class DataGenerator implements DataGeneratorEntrypoint {
 
         @Override
         public void generateBlockStateModels(BlockModelGenerators g) {
-            g.createTrivialCube(ModBlocks.PROTEIN_CONSTRUCTOR.get());
+//            g.createTrivialCube();
         }
 
         @Override

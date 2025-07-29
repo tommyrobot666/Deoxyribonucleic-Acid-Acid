@@ -36,6 +36,14 @@ public abstract class ItemStackMixin implements MutationEffectContainer {
     }
 
     @Override
+    public void removeMutationEffectAt(int i){
+        BacteriaData data = Objects.requireNonNull(getComponents().get(ModComponents.BACTERIA_DATA_COMPONENT.get()));
+        ArrayList<MutationEffect> effects = new ArrayList<>(data.effects());
+        effects.remove(i);
+        set(ModComponents.BACTERIA_DATA_COMPONENT.get(),new BacteriaData(data.petriDish(), effects));
+    }
+
+    @Override
     public ArrayList<MutationEffect> getMutationEffects() {
         return new ArrayList<>(Objects.requireNonNull(getComponents().get(ModComponents.BACTERIA_DATA_COMPONENT.get())).effects());
     }
