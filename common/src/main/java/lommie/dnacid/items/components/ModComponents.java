@@ -13,6 +13,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.alchemy.Potion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,57 +86,20 @@ public class ModComponents {
             ByteBufCodecs.INT
     );
 
-    public static Map<Potion, RegistrySupplier<DataComponentType<Integer>>> POTION_COMPONENTS;
+    public static Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> EFFECT_AMOUNT_COMPONENTS;
 
-    private static Map<Potion, RegistrySupplier<DataComponentType<Integer>>> registerPotionComponents() {
-        if (POTION_COMPONENTS != null){
-            return POTION_COMPONENTS;
+    private static Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> registerEffectAmountComponents() {
+        if (EFFECT_AMOUNT_COMPONENTS != null){
+            throw new RuntimeException("Why is this function being run twice?");
         }
 
-        Map<Potion, RegistrySupplier<DataComponentType<Integer>>> out = new HashMap<>();
-        HashSet<String> imGoingCrazy = new HashSet<>();
-        for (Map.Entry<ResourceKey<Potion>, Potion> potionEntry : BuiltInRegistries.POTION.entrySet()) {
-            Potion potion = potionEntry.getValue();
-            ResourceKey<Potion> key = potionEntry.getKey();
-            String name = key.location().toString().replace(':', '_');//key.location().getNamespace()+"_"+potion.name();//+key.location().getPath();
+        Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> out = new HashMap<>();
+        for (Map.Entry<ResourceKey<MobEffect>, MobEffect> mobEffectEntry : BuiltInRegistries.MOB_EFFECT.entrySet()) {
+            MobEffect mobEffect = mobEffectEntry.getValue();
+            ResourceKey<MobEffect> key = mobEffectEntry.getKey();
+            String name = "effect_amount_" + key.location().toString().replace(':', '_');
             LOGGER.error(name);
-            if (imGoingCrazy.contains(potion.name().substring(0,4))){
-                continue;
-            }
-            imGoingCrazy.add(potion.name().substring(0,4));
-
-            // Skip duplicates by registry key
-//            if (out.keySet().stream().anyMatch(p -> p.name().equals(key.location().getNamespace()+"_"+key.location().getPath()))) {continue;}
-            if (COMPONENT_TYPES.getRegistrar().contains(ResourceLocation.tryBuild(MOD_ID,name))) {continue;}
-
-            // Create the codec for Pair<Integer, Holder<Potion>>
-//            Codec<Pair<Integer, Holder<Potion>>> codec = Codec.INT.xmap(
-//                    i -> new ImmutablePair<>(i, Holder.direct(potion)),
-//                    Pair::getLeft
-//            );
-
-            // Define the StreamCodec with explicit type parameters
-//            StreamCodec<FriendlyByteBuf, Pair<Integer, Holder<Potion>>> streamCodec = StreamCodec.of(
-//                    // Encoder
-//                    (FriendlyByteBuf buf, Pair<Integer, Holder<Potion>> pair) -> {
-//                        buf.writeInt(pair.getLeft());  // Write the Integer part of the Pair
-//                        buf.writeResourceLocation(BuiltInRegistries.POTION.getKey(pair.getRight().value()));  // Write the ResourceLocation
-//                    },
-//                    // Decoder
-//                    buf -> {
-//                        int amount = buf.readInt();  // Read the Integer part
-//                        ResourceLocation id = buf.readResourceLocation();  // Read the ResourceLocation
-//                        Optional<Holder.Reference<Potion>> readPotion = BuiltInRegistries.POTION.get(id);
-//                        if (readPotion.isPresent()) {
-//                            return new ImmutablePair<>(amount, readPotion.get());  // Return the Pair
-//                        } else {
-//                            throw new IllegalStateException("Potion not found: " + id);  // Handle the case where the potion doesn't exist
-//                        }
-//                    }
-//            );
-
-            // Register the components
-            out.put(potion, register(
+            out.put(mobEffect, register(
                     name,
                     Codec.INT,
                     StreamCodec.of(FriendlyByteBuf::writeInt,FriendlyByteBuf::readInt)
@@ -146,7 +110,7 @@ public class ModComponents {
     }
 
     public static void register(){
-        POTION_COMPONENTS = registerPotionComponents();
+        EFFECT_AMOUNT_COMPONENTS = registerEffectAmountComponents();
         COMPONENT_TYPES.register();
     }
 }

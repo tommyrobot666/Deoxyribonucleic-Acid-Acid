@@ -8,6 +8,7 @@ import lommie.dnacid.mutation.MutationEffectContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
@@ -16,7 +17,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
@@ -82,10 +82,10 @@ public class BacteriaItem extends Item {
             }
         }
 
-        for (Potion potion : ModComponents.POTION_COMPONENTS.keySet()){
-            RegistrySupplier<DataComponentType<Integer>> component = ModComponents.POTION_COMPONENTS.get(potion);
+        for (MobEffect mobEffect : ModComponents.EFFECT_AMOUNT_COMPONENTS.keySet()){
+            RegistrySupplier<DataComponentType<Integer>> component = ModComponents.EFFECT_AMOUNT_COMPONENTS.get(mobEffect);
             if (bac.has(component.get())){
-                tooltip.add(Component.literal(potion.name()+"<"+bac.get(component.get())));
+                tooltip.add(Component.literal(component.getRegisteredName()+"<"+bac.get(component.get())));
             }
         }
     }

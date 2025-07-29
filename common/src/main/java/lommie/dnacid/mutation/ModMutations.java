@@ -3,10 +3,12 @@ package lommie.dnacid.mutation;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import lommie.dnacid.items.components.ModComponents;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.GameType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +22,12 @@ public class ModMutations {
     public static final DeferredRegister<MutationEffectType> MUTATION_EFFECT_TYPES =
             DeferredRegister.create(MOD_ID, MUTATION_EFFECT_TYPE_KEY);
 
-    public static RegistrySupplier<MutationEffectType> register(String name, Function<MutationEffectType.Settings, MutationEffectType> factory, MutationEffectType.Settings settings){
+    public static RegistrySupplier<MutationEffectType> register(@NotNull String name, Function<MutationEffectType.Settings, MutationEffectType> factory, MutationEffectType.Settings settings){
         ResourceKey<MutationEffectType> key = ResourceKey.create(MUTATION_EFFECT_TYPE_KEY, ResourceLocation.tryBuild(MOD_ID,name));
+        // STOP GIVING ME A FUCKING WARNING, THE GAME HAS CRASHED BECAUSE IT CAN BE NULL
+        if (key.location() == null){
+            throw new RuntimeException(name + "made a null location, because of \"L+Ratio+Bozo\"");
+        }
         return MUTATION_EFFECT_TYPES.register(key.location(), () -> factory.apply(settings.setId(key)));
     }
 
@@ -33,22 +39,24 @@ public class ModMutations {
                     .defaultEffect(() -> java.util.Optional.of(new MutationEffect(Objects.requireNonNull(ResourceLocation.tryBuild(MOD_ID, "test")), -1)))
     );
 
-    public static Map<Potion, RegistrySupplier<MutationEffectType>> POTION_MUTATION_EFFECT_TYPES;
+    public static Map<MobEffect, RegistrySupplier<MutationEffectType>> POTION_MUTATION_EFFECT_TYPES;
 
-    private static Map<Potion, RegistrySupplier<MutationEffectType>> registerPotionEffectTypes() {
-        HashMap<Potion, RegistrySupplier<MutationEffectType>> out = new HashMap<>();
-        for(Potion potion : ModComponents.POTION_COMPONENTS.keySet()){
-            out.put(potion,register(potion.name(),
-                    (s) -> new PotionMutationEffectType(s, potion),
+    private static Map<MobEffect, RegistrySupplier<MutationEffectType>> registerMobEffectTypes() {
+        HashMap<MobEffect, RegistrySupplier<MutationEffectType>> out = new HashMap<>();
+        for(MobEffect mobEffect : ModComponents.EFFECT_AMOUNT_COMPONENTS.keySet()){
+            RegistrySupplier<DataComponentType<Integer>> dataComponentRegistrySupplier = ModComponents.EFFECT_AMOUNT_COMPONENTS.get(mobEffect);
+            String name = dataComponentRegistrySupplier.getRegisteredName().replace(":","_"); // caused the "null" crash by making "tryBuild" fail
+            out.put(mobEffect,register(name,
+                    (s) -> new MobEffectMutationEffectType(s, mobEffect),
                     new MutationEffectType.Settings()
-                            .defaultEffect(() -> java.util.Optional.of(new MutationEffect(Objects.requireNonNull(ResourceLocation.tryBuild(MOD_ID, potion.name())), 100)))
-                            .name(potion.name())));
+                            .defaultEffect(() -> java.util.Optional.of(new MutationEffect(() -> POTION_MUTATION_EFFECT_TYPES.get(mobEffect).get(), 100)))
+                            .name(name)));
         }
         return out;
     }
 
     public static void register(){
-        POTION_MUTATION_EFFECT_TYPES = registerPotionEffectTypes();
+        POTION_MUTATION_EFFECT_TYPES = registerMobEffectTypes();
         MUTATION_EFFECT_TYPES.register();
     }
 }
