@@ -11,6 +11,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
 import static lommie.dnacid.Dnacid.MOD_ID;
+import static lommie.dnacid.ModRegistries.MUTATION_EFFECT_TYPE_REGISTRY;
 
 public class ModTabs {
     public static final DeferredRegister<CreativeModeTab> TABS =
@@ -44,9 +45,10 @@ public class ModTabs {
                                     o.accept(stack);
                                 }}))*/
                             .displayItems((p,o) ->
-                                    Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.entrySet().forEach((e) ->{
+                                    MUTATION_EFFECT_TYPE_REGISTRY.entrySet().forEach((e) ->{
+                                        if (e.getValue().defaultEffect().isEmpty()) return;
                                         ItemStack stack = new ItemStack(ModItems.PLASMID.get());
-                                        stack.set(ModComponents.MUTATION_EFFECT_COMPONENT.get(),e.getValue().defaultEffect());
+                                        stack.set(ModComponents.MUTATION_EFFECT_COMPONENT.get(),e.getValue().defaultEffect().get());
                                         o.accept(stack);
                                     })).build()
             )

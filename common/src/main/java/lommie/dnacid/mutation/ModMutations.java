@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static lommie.dnacid.Dnacid.MOD_ID;
-import static lommie.dnacid.Dnacid.MUTATION_EFFECT_TYPE_KEY;
+import static lommie.dnacid.ModRegistries.MUTATION_EFFECT_TYPE_KEY;
 
 public class ModMutations {
     public static final DeferredRegister<MutationEffectType> MUTATION_EFFECT_TYPES =

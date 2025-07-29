@@ -16,12 +16,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
+import static lommie.dnacid.ModRegistries.MUTATION_EFFECT_TYPE_KEY;
+import static lommie.dnacid.ModRegistries.MUTATION_EFFECT_TYPE_REGISTRY;
+
 public class MutationEffect implements DataComponentHolder {
     public static Codec<MutationEffect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceKey.codec(Dnacid.MUTATION_EFFECT_TYPE_KEY).fieldOf("id").forGetter(e -> e.getType().getId()),
+            ResourceKey.codec(MUTATION_EFFECT_TYPE_KEY).fieldOf("id").forGetter(e -> e.getType().getId()),
             Codec.INT.fieldOf("time").forGetter(e -> e.timeLeft),
             DataComponentMap.CODEC.fieldOf("components").forGetter(MutationEffect::getComponents))
-            .apply(instance, (y, t, c) -> new MutationEffect(Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.get(y).get()::value,t,(c))));
+            .apply(instance, (y, t, c) -> new MutationEffect(MUTATION_EFFECT_TYPE_REGISTRY.get(y).get()::value,t,(c))));
     public static StreamCodec<RegistryFriendlyByteBuf, MutationEffect> STREAM_CODEC = StreamCodec.of((b,e) -> e.encode(b),MutationEffect::decode);
     public int timeLeft;
     PatchedDataComponentMap components;
@@ -39,11 +42,11 @@ public class MutationEffect implements DataComponentHolder {
     }
 
     public MutationEffect(@NotNull ResourceLocation location, int timeLeft, DataComponentMap components){
-        this(Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.get(location).get()::value,timeLeft,components);
+        this(MUTATION_EFFECT_TYPE_REGISTRY.get(location).get()::value,timeLeft,components);
     }
 
     public MutationEffect(@NotNull ResourceLocation location,int timeLeft){
-        this(Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.get(location).get()::value,timeLeft);
+        this(MUTATION_EFFECT_TYPE_REGISTRY.get(location).get()::value,timeLeft);
     }
 
     public MutationEffect(@NotNull MutationEffectType type){
@@ -74,11 +77,11 @@ public class MutationEffect implements DataComponentHolder {
     }
 
     public static MutationEffect decode(RegistryFriendlyByteBuf buf) {
-        ResourceKey<MutationEffectType> id = buf.readResourceKey(Dnacid.MUTATION_EFFECT_TYPE_KEY); // You can lookup your MutationEffectType from the registry
-        MutationEffectType effectType = Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.getValue(id); // We'll write this next
+        ResourceKey<MutationEffectType> id = buf.readResourceKey(MUTATION_EFFECT_TYPE_KEY); // You can lookup your MutationEffectType from the registry
+        MutationEffectType effectType = MUTATION_EFFECT_TYPE_REGISTRY.getValue(id); // We'll write this next
         if (effectType == null){
             Dnacid.LOGGER.error("Unknown mutation effect type: " + id.location());
-            effectType = Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.getValue(Dnacid.MUTATION_EFFECT_TYPE_REGISTRY.getDefaultKey());
+            effectType = MUTATION_EFFECT_TYPE_REGISTRY.getValue(MUTATION_EFFECT_TYPE_REGISTRY.getDefaultKey());
         }
         int timeLeft = buf.readInt();
         MutationEffect effect = new MutationEffect(effectType,timeLeft);
