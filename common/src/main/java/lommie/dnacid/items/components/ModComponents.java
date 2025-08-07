@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static lommie.dnacid.Dnacid.LOGGER;
 import static lommie.dnacid.Dnacid.MOD_ID;
 
 public class ModComponents {
@@ -103,7 +102,6 @@ public class ModComponents {
             MobEffect mobEffect = mobEffectEntry.getValue();
             ResourceKey<MobEffect> key = mobEffectEntry.getKey();
             String name = "effect_amount_" + key.location().toString().replace(':', '_');
-            LOGGER.error(name);
             out.put(mobEffect, register(
                     name,
                     Codec.INT,

@@ -80,7 +80,7 @@ public class MutationEffect implements DataComponentHolder {
         ResourceKey<MutationEffectType> id = buf.readResourceKey(MUTATION_EFFECT_TYPE_KEY); // You can lookup your MutationEffectType from the registry
         MutationEffectType effectType = MUTATION_EFFECT_TYPE_REGISTRY.getValue(id); // We'll write this next
         if (effectType == null){
-            Dnacid.LOGGER.error("Unknown mutation effect type: " + id.location());
+            Dnacid.LOGGER.error("Unknown mutation effect type: {}", id.location());
             effectType = MUTATION_EFFECT_TYPE_REGISTRY.getValue(MUTATION_EFFECT_TYPE_REGISTRY.getDefaultKey());
         }
         int timeLeft = buf.readInt();

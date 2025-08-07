@@ -28,7 +28,7 @@ import java.util.Objects;
 
 public class ProteinItem extends Item {
     public ProteinItem(Properties properties, Protein protein) {
-        super(properties.component(ModComponents.PROTEIN.get(),protein));
+        super(properties.component(ModComponents.PROTEIN.get(),protein).component(ModComponents.AMINO_ACIDS_COMPONENT.get(), "MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYH"));
     }
 
     @Override

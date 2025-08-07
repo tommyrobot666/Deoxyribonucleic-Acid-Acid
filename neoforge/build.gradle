@@ -56,3 +56,15 @@ shadowJar {
 remapJar {
     input.set shadowJar.archiveFile
 }
+
+// Task to copy generated sources from fabric to neoforge
+tasks.register("copyGeneratedFromFabric", Copy) {
+    dependsOn(":fabric:compileJava") // Or any task that ensures generation has run
+    from project(":fabric").file("src/main/generated")
+    into file("src/main/generated")
+}
+
+// Hook it into the NeoForge compile cycle
+tasks.named("compileJava").configure {
+    dependsOn("copyGeneratedFromFabric")
+}

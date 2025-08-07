@@ -31,6 +31,8 @@ public class DataGenerator implements DataGeneratorEntrypoint {
         @Override
         public void generateItemModels(ItemModelGenerators g) {
             g.generateFlatItem(ModItems.PETRI_DISH.get(), ModelTemplates.FLAT_ITEM);
+            g.generateFlatItem(ModItems.BACTERIA.get(), ModelTemplates.FLAT_ITEM);
+            g.generateFlatItem(ModItems.PROTEIN.get(), ModelTemplates.FLAT_ITEM);
         }
     }
 }

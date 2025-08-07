@@ -8,6 +8,7 @@ import lommie.dnacid.mutation.MutationEffectContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.SlotAccess;
@@ -81,11 +82,8 @@ public class BacteriaItem extends Item {
             }
         }
 
-        for (MobEffect mobEffect : ModComponents.EFFECT_AMOUNT_COMPONENTS.keySet()){
-            RegistrySupplier<DataComponentType<Integer>> component = ModComponents.EFFECT_AMOUNT_COMPONENTS.get(mobEffect);
-            if (bac.has(component.get())){
-                tooltip.add(Component.literal(component.getRegisteredName()+"<"+bac.get(component.get())));
-            }
+        for (ResourceLocation metabolicOutput : data.metabolicOutputs().keySet()){
+            tooltip.add(Component.literal(metabolicOutput+"<"+data.metabolicOutputs().get(metabolicOutput)));
         }
     }
 

@@ -8,8 +8,8 @@ import net.neoforged.fml.common.Mod;
 public final class DnacidNeoForge {
     public DnacidNeoForge() {
         // Run our common setup.
-        Dnacid.init();
-        DnacidClient.init();
+//        Dnacid.init();
+//        DnacidClient.init();
     }
 
 }

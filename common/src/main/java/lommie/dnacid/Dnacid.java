@@ -1,6 +1,7 @@
 package lommie.dnacid;
 
 
+import dev.architectury.platform.Platform;
 import lommie.dnacid.blocks.ModBlocks;
 import lommie.dnacid.items.ModItems;
 import lommie.dnacid.items.ModTabs;
@@ -22,7 +23,9 @@ public final class Dnacid {
     public static final List<Character> AMINO_ACID_CHARS = List.of('A','R','N','D','C','Q','E','G','H','I','L','K','M','F','P','S','T','W','Y','V');
 
     public static void init() {
-        ModRegistries.register();
+        if (!Platform.isForgeLike()) {
+            ModRegistries.register();
+        }
         ModComponents.register();
         ModMutations.register();
         ModItems.register();

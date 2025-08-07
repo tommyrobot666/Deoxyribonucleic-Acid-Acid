@@ -81,7 +81,7 @@ public class MutationEffectType {
     /**
      * @return returns whether effect should be removed
      * */
-    public boolean bacteriaMutationTick(MutationEffect effect, ItemStack bacteria){
+    boolean bacteriaMutationTick(MutationEffect effect, ItemStack bacteria){
         throw new IllegalStateException("Mutation Effect \""+getName().getString()+"\" does nothing when applied to a bacteria");
     }
 

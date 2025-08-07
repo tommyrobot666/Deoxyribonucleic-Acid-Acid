@@ -1,9 +1,9 @@
 package lommie.dnacid;
 
 import com.mojang.serialization.Lifecycle;
+import dev.architectury.platform.Platform;
 import lommie.dnacid.mutation.MutationEffectType;
 import net.minecraft.core.DefaultedMappedRegistry;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -49,7 +49,7 @@ public class ModRegistries {
 //
 //    public static final MappedRegistry<ResourceLocation>
 
-    static void register(){
+    public static void register(){
         registerRegistry(MUTATION_EFFECT_TYPE_KEY,MUTATION_EFFECT_TYPE_REGISTRY);
     }
 }

@@ -1,8 +1,7 @@
 package lommie.dnacid.mutation;
 
-import lommie.dnacid.items.components.ModComponents;
+import lommie.dnacid.items.components.BacteriaData;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -31,12 +30,9 @@ public class MobEffectMutationEffectType extends MutationEffectType{
 
     @Override
     boolean bacteriaMutationTick(MutationEffect effect, ItemStack bacteria) {
-        DataComponentType<Integer> component = ModComponents.EFFECT_AMOUNT_COMPONENTS.get(mobEffect).get();
-        if (bacteria.has(component)){
-            bacteria.set(component, bacteria.get(component)+1);
-        } else {
-            bacteria.set(component,1);
-        }
+        BacteriaData data = getBacteriaData(bacteria);
+        data.addMetabolicOutput(getId().location(),1);
+        setBacteriaData(bacteria,data);
         return false;
     }
 }
