@@ -90,30 +90,30 @@ public class ModComponents {
             Protein.STREAM_CODEC
     );
 
-    public static Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> EFFECT_AMOUNT_COMPONENTS;
-
-    private static Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> registerEffectAmountComponents() {
-        if (EFFECT_AMOUNT_COMPONENTS != null){
-            throw new RuntimeException("Why is this function being run twice?");
-        }
-
-        Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> out = new HashMap<>();
-        for (Map.Entry<ResourceKey<MobEffect>, MobEffect> mobEffectEntry : BuiltInRegistries.MOB_EFFECT.entrySet()) {
-            MobEffect mobEffect = mobEffectEntry.getValue();
-            ResourceKey<MobEffect> key = mobEffectEntry.getKey();
-            String name = "effect_amount_" + key.location().toString().replace(':', '_');
-            out.put(mobEffect, register(
-                    name,
-                    Codec.INT,
-                    StreamCodec.of(FriendlyByteBuf::writeInt,FriendlyByteBuf::readInt)
-            ));
-        }
-
-        return out;
-    }
+//    public static Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> EFFECT_AMOUNT_COMPONENTS;
+//
+//    private static Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> registerEffectAmountComponents() {
+//        if (EFFECT_AMOUNT_COMPONENTS != null){
+//            throw new RuntimeException("Why is this function being run twice?");
+//        }
+//
+//        Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> out = new HashMap<>();
+//        for (Map.Entry<ResourceKey<MobEffect>, MobEffect> mobEffectEntry : BuiltInRegistries.MOB_EFFECT.entrySet()) {
+//            MobEffect mobEffect = mobEffectEntry.getValue();
+//            ResourceKey<MobEffect> key = mobEffectEntry.getKey();
+//            String name = "effect_amount_" + key.location().toString().replace(':', '_');
+//            out.put(mobEffect, register(
+//                    name,
+//                    Codec.INT,
+//                    StreamCodec.of(FriendlyByteBuf::writeInt,FriendlyByteBuf::readInt)
+//            ));
+//        }
+//
+//        return out;
+//    }
 
     public static void register(){
-        EFFECT_AMOUNT_COMPONENTS = registerEffectAmountComponents();
+//        EFFECT_AMOUNT_COMPONENTS = registerEffectAmountComponents();
         COMPONENT_TYPES.register();
     }
 }
