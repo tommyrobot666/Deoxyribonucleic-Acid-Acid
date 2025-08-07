@@ -3,6 +3,7 @@ package lommie.dnacid;
 import com.mojang.serialization.Lifecycle;
 import lommie.dnacid.mutation.MutationEffectType;
 import net.minecraft.core.DefaultedMappedRegistry;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -41,6 +42,12 @@ public class ModRegistries {
 
     public static final DefaultedMappedRegistry<MutationEffectType> MUTATION_EFFECT_TYPE_REGISTRY =
             new DefaultedMappedRegistry<>(MOD_ID+":test", MUTATION_EFFECT_TYPE_KEY, Lifecycle.stable(),false);
+
+    //unneeded for now?
+//    public static final ResourceKey<Registry<ResourceLocation>> METABOLIC_OUTPUTS_KEY =
+//            ResourceKey.createRegistryKey(ResourceLocation.tryBuild(MOD_ID,"metabolic_outputs"));
+//
+//    public static final MappedRegistry<ResourceLocation>
 
     static void register(){
         registerRegistry(MUTATION_EFFECT_TYPE_KEY,MUTATION_EFFECT_TYPE_REGISTRY);

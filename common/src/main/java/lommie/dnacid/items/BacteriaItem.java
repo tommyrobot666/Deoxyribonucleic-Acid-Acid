@@ -21,24 +21,23 @@ import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class BacteriaItem extends Item {
     public BacteriaItem(Properties properties) {
-        super(properties.component(ModComponents.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(false,List.of())));
+        super(properties.component(ModComponents.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(false, List.of(), Map.of())));
     }
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack bac, ItemStack other, Slot slot, ClickAction clickAction, Player player, SlotAccess slotAccess) {
         BacteriaData data = Objects.requireNonNull(bac.getComponents().get(ModComponents.BACTERIA_DATA_COMPONENT.get()));
         if (other.getItem().toString().equals("dnacid:petri_dish") && !data.petriDish()){
-            bac.set(ModComponents.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(true,data.effects()));
+            setData(bac, data.setPetriDish(true));
             other.shrink(1);
             return true;
         } else if (other.has(ModComponents.MUTATION_EFFECT_COMPONENT.get())) {
-            List<MutationEffect> effects = new ArrayList<>(data.effects());
-            effects.add(other.get(ModComponents.MUTATION_EFFECT_COMPONENT.get()));
-            bac.set(ModComponents.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(data.petriDish(),effects));
+            setData(bac, data.addEffect(other.get(ModComponents.MUTATION_EFFECT_COMPONENT.get())));
             other.shrink(1);
             return true;
         }
@@ -52,7 +51,7 @@ public class BacteriaItem extends Item {
         ArrayList<MutationEffect> effects = new ArrayList<>(data.effects());
         int j = 0;
         while (j < effects.size()) {
-            if (effects.get(j).getType().mutationTick(effects.get(j),(MutationEffectContainer) ((Object) bac))) {
+            if (effects.get(j).getType().mutationTick(effects.get(j), (MutationEffectContainer) (Object) bac)) {
                 effects.remove(j);
             } else {
                 j++;
@@ -88,5 +87,9 @@ public class BacteriaItem extends Item {
                 tooltip.add(Component.literal(component.getRegisteredName()+"<"+bac.get(component.get())));
             }
         }
+    }
+
+    void setData(ItemStack bac ,BacteriaData data){
+        bac.set(ModComponents.BACTERIA_DATA_COMPONENT.get(),data);
     }
 }

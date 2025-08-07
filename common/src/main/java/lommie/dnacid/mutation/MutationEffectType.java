@@ -1,6 +1,9 @@
 package lommie.dnacid.mutation;
 
+import lommie.dnacid.items.components.BacteriaData;
+import lommie.dnacid.items.components.ModComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.network.chat.Component;
@@ -78,8 +81,16 @@ public class MutationEffectType {
     /**
      * @return returns whether effect should be removed
      * */
-    boolean bacteriaMutationTick(MutationEffect effect, ItemStack bacteria){
+    public boolean bacteriaMutationTick(MutationEffect effect, ItemStack bacteria){
         throw new IllegalStateException("Mutation Effect \""+getName().getString()+"\" does nothing when applied to a bacteria");
+    }
+
+    void setBacteriaData(ItemStack bac , BacteriaData data){
+        bac.set(ModComponents.BACTERIA_DATA_COMPONENT.get(),data);
+    }
+
+    BacteriaData getBacteriaData(ItemStack bac){
+        return bac.get(ModComponents.BACTERIA_DATA_COMPONENT.get());
     }
 
     public MutationEffect decode(RegistryFriendlyByteBuf buf, MutationEffect effect) {return effect;}
@@ -129,6 +140,16 @@ public class MutationEffectType {
 
         public Settings name(String name){
             return name(Component.literal(name));
+        }
+
+        public Settings nameStyle(Style style){
+            this.name = name.copy().setStyle(style);
+            return this;
+        }
+
+        public Settings translationName(){
+            this.name = Component.translatable("mutationEffect."+this.id.location().getNamespace()+"."+this.id.location().getPath());
+            return this;
         }
 
         public Settings setId(ResourceKey<MutationEffectType> id) {
