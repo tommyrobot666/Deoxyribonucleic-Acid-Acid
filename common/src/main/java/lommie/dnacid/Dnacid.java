@@ -7,6 +7,7 @@ import lommie.dnacid.items.ModItems;
 import lommie.dnacid.items.ModTabs;
 import lommie.dnacid.items.components.ModComponents;
 import lommie.dnacid.mutation.ModMutations;
+import lommie.dnacid.protein.ModProteins;
 import lommie.dnacid.screens.*;
 
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ public final class Dnacid {
         }
         ModComponents.register();
         ModMutations.register();
+        ModProteins.register();
         ModItems.register();
         ModBlocks.register();
         ModTabs.register();

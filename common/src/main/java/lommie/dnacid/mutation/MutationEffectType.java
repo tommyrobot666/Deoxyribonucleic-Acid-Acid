@@ -2,6 +2,8 @@ package lommie.dnacid.mutation;
 
 import lommie.dnacid.items.components.BacteriaData;
 import lommie.dnacid.items.components.ModComponents;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.codec.StreamCodec;
@@ -13,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -83,6 +86,21 @@ public class MutationEffectType {
      * */
     boolean bacteriaMutationTick(MutationEffect effect, ItemStack bacteria){
         throw new IllegalStateException("Mutation Effect \""+getName().getString()+"\" does nothing when applied to a bacteria");
+    }
+
+    /**
+     * @Note Make your own newEffectWith fuction for each data type
+     */
+    public MutationEffect newEffectWith(int time, @Nullable Map<DataComponentType<?>,?> data){
+        if (data == null){
+            return new MutationEffect(this,time);
+        }
+
+        DataComponentMap.Builder mapBuilder = DataComponentMap.builder();
+        for (DataComponentType<?> component : data.keySet()){
+            mapBuilder.set((DataComponentType<Object>) component, data.get(component));
+        }
+        return new MutationEffect(this, time, mapBuilder.build());
     }
 
     void setBacteriaData(ItemStack bac , BacteriaData data){

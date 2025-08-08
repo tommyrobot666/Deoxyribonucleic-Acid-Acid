@@ -3,6 +3,7 @@ package lommie.dnacid;
 import com.mojang.serialization.Lifecycle;
 import dev.architectury.platform.Platform;
 import lommie.dnacid.mutation.MutationEffectType;
+import lommie.dnacid.protein.Protein;
 import net.minecraft.core.DefaultedMappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.WritableRegistry;
@@ -43,13 +44,15 @@ public class ModRegistries {
     public static final DefaultedMappedRegistry<MutationEffectType> MUTATION_EFFECT_TYPE_REGISTRY =
             new DefaultedMappedRegistry<>(MOD_ID+":test", MUTATION_EFFECT_TYPE_KEY, Lifecycle.stable(),false);
 
-    //unneeded for now?
-//    public static final ResourceKey<Registry<ResourceLocation>> METABOLIC_OUTPUTS_KEY =
-//            ResourceKey.createRegistryKey(ResourceLocation.tryBuild(MOD_ID,"metabolic_outputs"));
-//
-//    public static final MappedRegistry<ResourceLocation>
+
+    public static final ResourceKey<Registry<Protein>> PROTEINS_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.tryBuild(MOD_ID,"proteins"));
+
+    public static final DefaultedMappedRegistry<Protein> PROTEINS_REGISTRY =
+            new DefaultedMappedRegistry<>(MOD_ID+":test",PROTEINS_KEY,Lifecycle.stable(),false);
 
     public static void register(){
         registerRegistry(MUTATION_EFFECT_TYPE_KEY,MUTATION_EFFECT_TYPE_REGISTRY);
+        registerRegistry(PROTEINS_KEY,PROTEINS_REGISTRY);
     }
 }

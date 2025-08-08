@@ -3,23 +3,16 @@ package lommie.dnacid.items.components;
 import com.mojang.serialization.Codec;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
-import lommie.dnacid.mutation.MutationEffect;
 import lommie.dnacid.protein.Protein;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import static lommie.dnacid.Dnacid.MOD_ID;
@@ -58,21 +51,6 @@ public class ModComponents {
             }
     );
 
-    public static final RegistrySupplier<DataComponentType<MutationEffect>> MUTATION_EFFECT_COMPONENT = COMPONENT_TYPES.register(
-            "mutation_effect",
-            () -> new DataComponentType<>() {
-                @Override
-                public Codec<MutationEffect> codec() {
-                    return MutationEffect.CODEC;
-                }
-
-                @Override
-                public @NotNull StreamCodec<? super RegistryFriendlyByteBuf, MutationEffect> streamCodec() {
-                    return StreamCodec.of((b,e) -> e.encode(b),MutationEffect::decode);
-                }
-            }
-    );
-
     public static final RegistrySupplier<DataComponentType<BacteriaData>> BACTERIA_DATA_COMPONENT = COMPONENT_TYPES.register(
             "bacteria_data",
             BacteriaDataComponentType::new
@@ -90,30 +68,7 @@ public class ModComponents {
             Protein.STREAM_CODEC
     );
 
-//    public static Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> EFFECT_AMOUNT_COMPONENTS;
-//
-//    private static Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> registerEffectAmountComponents() {
-//        if (EFFECT_AMOUNT_COMPONENTS != null){
-//            throw new RuntimeException("Why is this function being run twice?");
-//        }
-//
-//        Map<MobEffect, RegistrySupplier<DataComponentType<Integer>>> out = new HashMap<>();
-//        for (Map.Entry<ResourceKey<MobEffect>, MobEffect> mobEffectEntry : BuiltInRegistries.MOB_EFFECT.entrySet()) {
-//            MobEffect mobEffect = mobEffectEntry.getValue();
-//            ResourceKey<MobEffect> key = mobEffectEntry.getKey();
-//            String name = "effect_amount_" + key.location().toString().replace(':', '_');
-//            out.put(mobEffect, register(
-//                    name,
-//                    Codec.INT,
-//                    StreamCodec.of(FriendlyByteBuf::writeInt,FriendlyByteBuf::readInt)
-//            ));
-//        }
-//
-//        return out;
-//    }
-
     public static void register(){
-//        EFFECT_AMOUNT_COMPONENTS = registerEffectAmountComponents();
         COMPONENT_TYPES.register();
     }
 }

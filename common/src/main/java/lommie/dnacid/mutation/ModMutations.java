@@ -2,8 +2,7 @@ package lommie.dnacid.mutation;
 
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
-import lommie.dnacid.items.components.ModComponents;
-import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
@@ -43,9 +42,9 @@ public class ModMutations {
 
     private static Map<MobEffect, RegistrySupplier<MutationEffectType>> registerMobEffectTypes() {
         HashMap<MobEffect, RegistrySupplier<MutationEffectType>> out = new HashMap<>();
-        for(MobEffect mobEffect : ModComponents.EFFECT_AMOUNT_COMPONENTS.keySet()){
-            RegistrySupplier<DataComponentType<Integer>> dataComponentRegistrySupplier = ModComponents.EFFECT_AMOUNT_COMPONENTS.get(mobEffect);
-            String name = dataComponentRegistrySupplier.getRegisteredName().replace(":","_"); // caused the "null" crash by making "tryBuild" fail
+        for(Map.Entry<ResourceKey<MobEffect>, MobEffect> mobEffectEntry : BuiltInRegistries.MOB_EFFECT.entrySet()){
+            MobEffect mobEffect = mobEffectEntry.getValue();
+            String name = mobEffectEntry.getKey().location().toString().replace(":","_"); // caused the "null" crash by making "tryBuild" fail
             out.put(mobEffect,register(name,
                     (s) -> new MobEffectMutationEffectType(s, mobEffect),
                     new MutationEffectType.Settings()

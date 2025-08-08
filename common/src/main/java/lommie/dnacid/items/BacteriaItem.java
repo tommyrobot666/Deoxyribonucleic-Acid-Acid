@@ -1,15 +1,13 @@
 package lommie.dnacid.items;
 
-import dev.architectury.registry.registries.RegistrySupplier;
 import lommie.dnacid.items.components.BacteriaData;
 import lommie.dnacid.items.components.ModComponents;
 import lommie.dnacid.mutation.MutationEffect;
 import lommie.dnacid.mutation.MutationEffectContainer;
+import lommie.dnacid.protein.Protein;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
@@ -20,14 +18,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class BacteriaItem extends Item {
     public BacteriaItem(Properties properties) {
-        super(properties.component(ModComponents.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(false, List.of(), Map.of())));
+        super(properties.component(ModComponents.BACTERIA_DATA_COMPONENT.get(), new BacteriaData(false, List.of(), Map.of(), Map.of())));
     }
 
     @Override
@@ -37,9 +32,11 @@ public class BacteriaItem extends Item {
             setData(bac, data.setPetriDish(true));
             other.shrink(1);
             return true;
-        } else if (other.has(ModComponents.MUTATION_EFFECT_COMPONENT.get())) {
-            setData(bac, data.addEffect(other.get(ModComponents.MUTATION_EFFECT_COMPONENT.get())));
-            other.shrink(1);
+        } else if (other.has(ModComponents.PROTEIN.get())) {
+            Protein protein = other.get(ModComponents.PROTEIN.get());
+            int amount = other.getCount();
+            setData(bac, data.addProtein(protein,amount));
+            other.shrink(amount);
             return true;
         }
 
@@ -49,6 +46,17 @@ public class BacteriaItem extends Item {
     @Override
     public void inventoryTick(ItemStack bac, Level level, Entity entity, int i, boolean bl) {
         BacteriaData data = Objects.requireNonNull(bac.getComponents().get(ModComponents.BACTERIA_DATA_COMPONENT.get()));
+        HashMap<Protein,Integer> proteins = new HashMap<>(data.proteins());
+        for (Protein protein : proteins.keySet()){
+            data = data.addEffects(protein.effects);
+            if (proteins.get(protein) < 2){
+                proteins.remove(protein);
+            } else {
+                proteins.put(protein,proteins.get(protein)-1);
+            }
+        }
+        data.setProteins(proteins);
+        setData(bac,data);
         ArrayList<MutationEffect> effects = new ArrayList<>(data.effects());
         int j = 0;
         while (j < effects.size()) {
